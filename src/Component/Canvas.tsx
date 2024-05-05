@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { clearCanvas, updateCanvas } from "../utils/canvas";
+import Toolbar from "./Toolbar";
 
-function drawSquare(
-  ctx: CanvasRenderingContext2D,
-  square: Square,
-  scale: number
-) {
+function drawSquare(ctx: CanvasRenderingContext2D, square: Square) {
   // Draw the square
   ctx.fillStyle = square.color;
   ctx.fillRect(square.x, square.y, square.size, square.size);
@@ -48,11 +45,7 @@ function drawSquare(
   }
 }
 
-function drawCircle(
-  ctx: CanvasRenderingContext2D,
-  circle: Circle,
-  scale: number
-) {
+function drawCircle(ctx: CanvasRenderingContext2D, circle: Circle) {
   // Draw the circle
   ctx.beginPath();
   ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
@@ -102,8 +95,8 @@ function drawCircle(
 }
 
 function Canvas() {
-  // const [scale, setScale] = useState(1);
-  // const [pan, setPan] = useState<Pan>({ panX: 10, panY: 10 });
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState<Pan>({ panX: 10, panY: 10 });
 
   const [diamension, setDiamension] = useState({
     height: window.innerHeight,
@@ -124,14 +117,9 @@ function Canvas() {
     x: 700,
     y: 700,
     radius: 50,
-    color: "red",
+    color: "blue",
     handleSize: 4,
     selected: false,
-  });
-
-  const [cursorPositionOnCanvas, setCursorPositionOnCanvas] = useState({
-    clientX: 0,
-    clientY: 0,
   });
 
   const canvasElement = useRef<HTMLCanvasElement>(null);
@@ -203,8 +191,8 @@ function Canvas() {
     }
 
     if (ctx) {
-      drawSquare(ctx, square, scale);
-      drawCircle(ctx, circle, scale);
+      drawSquare(ctx, square);
+      drawCircle(ctx, circle);
     }
 
     return () => {
