@@ -102,8 +102,8 @@ function drawCircle(
 }
 
 function Canvas() {
-  const [scale, setScale] = useState(1);
-  const [pan, setPan] = useState<Pan>({ panX: 10, panY: 10 });
+  // const [scale, setScale] = useState(1);
+  // const [pan, setPan] = useState<Pan>({ panX: 10, panY: 10 });
 
   const [diamension, setDiamension] = useState({
     height: window.innerHeight,
