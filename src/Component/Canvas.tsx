@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { clearCanvas, updateCanvas } from "../utils/canvas";
-import Toolbar from "./Toolbar";
 
 function drawSquare(ctx: CanvasRenderingContext2D, square: Square) {
   // Draw the square
@@ -95,8 +94,8 @@ function drawCircle(ctx: CanvasRenderingContext2D, circle: Circle) {
 }
 
 function Canvas() {
-  const [scale, setScale] = useState(1);
-  const [pan, setPan] = useState<Pan>({ panX: 10, panY: 10 });
+  const [scale] = useState(1);
+  const [pan] = useState<Pan>({ panX: 10, panY: 10 });
 
   const [diamension, setDiamension] = useState({
     height: window.innerHeight,
