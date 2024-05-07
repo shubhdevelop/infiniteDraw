@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { clearCanvas } from "../utils/canvas";
-import { AllShape, Ellipse, Rect } from "../utils/shapeTypes";
+import { AllShape, Rect } from "../utils/shapeTypes";
 import { useSelector } from "react-redux";
 import { InitialState } from "../features/canvasSlice";
 import { nanoid } from "nanoid";

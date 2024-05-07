@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { AllShape } from "../utils/shapeTypes";
 
 type ToolState = {
   active:

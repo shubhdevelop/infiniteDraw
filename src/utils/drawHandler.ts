@@ -8,7 +8,7 @@ function drawHandler(
 ) {
   //handle
   ctx.strokeStyle = "blue";
-  ctx.strokeRect(posX - 1.5, posY - 1.5, width + 3, width + 3);
+  ctx.strokeRect(posX - 1.5, posY - 1.5, width + 3, height + 3);
 
   ctx.fillStyle = "blue";
 

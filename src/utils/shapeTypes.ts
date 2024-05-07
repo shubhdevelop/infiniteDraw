@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { drawHandler } from "./drawHandler";
 
 export interface Shape {
   id: string; //nanoid
