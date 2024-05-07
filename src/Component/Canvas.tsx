@@ -1,216 +1,114 @@
 import { useEffect, useRef, useState } from "react";
-import { clearCanvas, updateCanvas } from "../utils/canvas";
+import { clearCanvas } from "../utils/canvas";
+import { AllShape, Ellipse, Rect } from "../utils/shapeTypes";
+import { useSelector } from "react-redux";
+import { InitialState } from "../features/canvasSlice";
+import { nanoid } from "nanoid";
+import { drawRect } from "../utils/paint";
 
-function drawSquare(ctx: CanvasRenderingContext2D, square: Square) {
-  // Draw the square
-  ctx.fillStyle = square.color;
-  ctx.fillRect(square.x, square.y, square.size, square.size);
+const square: Rect = {
+  type: "rect",
+  height: 100,
+  width: 100,
+  fillColor: "red",
+  strokeColor: "",
+  strokeWidth: 0,
+  innerText: "",
+  posX: 10,
+  posY: 10,
+  id: nanoid(),
+  rotation: 0,
+  selected: false,
+};
 
-  // Draw resize handles if selected
-  if (square.selected) {
-    ctx.fillStyle = "blue";
-    ctx.fillRect(
-      square.x - square.handleSize / 2 - 4,
-      square.y - square.handleSize / 2 - 4,
-      square.handleSize + 3,
-      square.handleSize + 3
-    );
-    ctx.fillRect(
-      square.x + square.size - square.handleSize / 2 + 1,
-      square.y - square.handleSize / 2 - 4,
-      square.handleSize + 3,
-      square.handleSize + 3
-    );
-    ctx.fillRect(
-      square.x + square.size - square.handleSize / 2 + 1,
-      square.y + square.size - square.handleSize / 2 + 1,
-      square.handleSize + 3,
-      square.handleSize + 3
-    );
-    ctx.fillRect(
-      square.x - square.handleSize / 2 - 4,
-      square.y + square.size - square.handleSize / 2 + 1,
-      square.handleSize + 3,
-      square.handleSize + 3
-    );
-    ctx.strokeStyle = "blue";
+const Canvas = () => {
+  const { scale, pan } = useSelector(
+    (state: InitialState) => state.canvasState
+  );
 
-    ctx.strokeRect(
-      square.x - 1.5,
-      square.y - 1.5,
-      square.size + 3,
-      square.size + 3
-    );
-  }
-}
-
-function drawCircle(ctx: CanvasRenderingContext2D, circle: Circle) {
-  // Draw the circle
-  ctx.beginPath();
-  ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = circle.color;
-  ctx.fill();
-  ctx.closePath();
-
-  // Draw resize handles if selected
-  if (circle.selected) {
-    ctx.fillStyle = "blue";
-    ctx.fillRect(
-      // circle.x - circle.radius - circle.handleSize / 2 - 2.4,
-      // circle.y - circle.handleSize / 2,
-      circle.x - circle.radius,
-      circle.y - circle.radius,
-      circle.handleSize,
-      circle.handleSize
-    );
-    ctx.fillRect(
-      circle.x + circle.radius - circle.handleSize / 2 + 3,
-      circle.y - circle.handleSize / 2,
-      circle.handleSize,
-      circle.handleSize
-    );
-    ctx.fillRect(
-      circle.x - circle.handleSize / 2,
-      circle.y - circle.radius - circle.handleSize / 2 - 2.5,
-      circle.handleSize,
-      circle.handleSize
-    );
-    ctx.fillRect(
-      circle.x - circle.handleSize / 2,
-      circle.y + circle.radius - circle.handleSize / 2 + 2.5,
-      circle.handleSize,
-      circle.handleSize
-    );
-
-    ctx.strokeStyle = "blue";
-
-    ctx.strokeRect(
-      circle.x - circle.radius - 1.5,
-      circle.y - circle.radius - 1.5,
-      circle.radius * 2 + 4,
-      circle.radius * 2 + 4
-    );
-  }
-}
-
-function Canvas() {
-  const [scale] = useState(1);
-  const [pan] = useState<Pan>({ panX: 10, panY: 10 });
-
-  const [diamension, setDiamension] = useState({
-    height: window.innerHeight,
-    width: window.innerWidth,
-  });
-
-  const [square, setSquare] = useState<Square>({
-    type: "square",
-    x: 500,
-    y: 500,
-    size: 100,
-    color: "red",
-    handleSize: 2,
-    selected: false,
-  });
-  const [circle, setCircle] = useState<Circle>({
-    type: "circle",
-    x: 700,
-    y: 700,
-    radius: 50,
-    color: "blue",
-    handleSize: 4,
-    selected: false,
-  });
-
+  const [shapes] = useState<AllShape[]>([square]);
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvas = canvasElement!.current;
   const ctx = canvas?.getContext("2d");
-  useEffect(() => {
-    //Handle Windows resize
-    const handleResize = () => {
-      setDiamension({
-        height: window.innerHeight,
-        width: window.innerWidth,
-      });
-    };
 
+  // const handleClick = (event: MouseEvent) => {
+  //   if (canvas && ctx) {
+  //     var mouseX =
+  //       (event.clientX - canvas.getBoundingClientRect().left - pan.x) / scale;
+  //     var mouseY =
+  //       (event.clientY - canvas.getBoundingClientRect().top - pan.y) / scale;
+
+  //     // Check if mouse click is inside the square
+  //     shapes.forEach((shape) => {
+  //       if (shape.type == "rect") {
+  //         if (shape.isMouseInsideSelectableArea(mouseX, mouseY)) {
+  //           // updateCanvas();
+  //           console.log("old", shape);
+
+  //           const newShape = Object.create(shape);
+  //           newShape.selected = !shape.selected;
+  //           console.log("new", newShape);
+
+  //           setShapes((prev) =>
+  //             prev.map((obj) => (obj.id === shape.id ? newShape : obj))
+  //           );
+  //         }
+  //       }
+  //       if (shape.type == "ellipse") {
+  //         if (shape.isMouseInsideSelectableArea(mouseX, mouseY)) {
+  //           console.log("old", shape);
+
+  //           const newShape = Object.create(shape);
+  //           newShape.selected = !shape.selected;
+  //           console.log("new", newShape);
+
+  //           setShapes((prev) =>
+  //             prev.map((obj) => (obj.id === shape.id ? newShape : obj))
+  //           );
+  //         }
+  //       }
+  //     });
+  //   }
+  // };
+
+  useEffect(() => {
     // the Scale and pan
     if (ctx) {
-      ctx.setTransform(scale, 0, 0, scale, pan.panX, pan.panY);
+      ctx.setTransform(scale / 100, 0, 0, scale / 100, pan.x, pan.y);
     }
 
-    const handleClick = (event: MouseEvent) => {
-      if (canvas && ctx) {
-        var mouseX =
-          (event.clientX - canvas.getBoundingClientRect().left - pan.panX) /
-          scale;
-        var mouseY =
-          (event.clientY - canvas.getBoundingClientRect().top - pan.panY) /
-          scale;
-
-        // Check if mouse click is inside the square
-        [square, circle].forEach((shape) => {
-          if (shape.type == "square") {
-            if (
-              mouseX >= square.x &&
-              mouseX <= square.x + square.size &&
-              mouseY >= square.y &&
-              mouseY <= square.y + square.size
-            ) {
-              // Toggle the selected state
-              setSquare((prev) => {
-                return { ...prev, selected: !prev.selected };
-              });
-              updateCanvas();
-            }
-          }
-          if (shape.type == "circle") {
-            var distance = Math.sqrt(
-              Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)
-            );
-            if (distance <= shape.radius) {
-              // Toggle the selected state
-              setCircle((prev) => {
-                console.log(prev);
-
-                return { ...prev, selected: !prev.selected };
-              });
-              updateCanvas();
-            }
-          }
-        });
-      }
-    };
-
-    window.addEventListener("resize", () => {
-      handleResize();
-    });
-
-    if (canvas) {
-      canvas.addEventListener("click", handleClick);
-    }
-
+    //Draws All the shapes
     if (ctx) {
-      drawSquare(ctx, square);
-      drawCircle(ctx, circle);
+      shapes.forEach((shape) => {
+        switch (shape.type) {
+          case "rect":
+            drawRect(ctx, shape);
+            break;
+          default:
+            break;
+        }
+      });
     }
+    //handle what happens when mouse is clicked on canvas
+    // if (canvas) {
+    //   canvas.addEventListener("click", handleClick);
+    // }
 
     return () => {
       if (ctx) {
-        clearCanvas(ctx, diamension.width, diamension.height);
+        clearCanvas(ctx, window.innerWidth, window.innerHeight);
       }
-      window.removeEventListener("resize", handleResize);
-      canvas?.removeEventListener("click", handleClick);
+      // canvas?.removeEventListener("click", handleClick);
     };
-  }, [pan, scale, circle, square, diamension]);
+  }, [pan, scale, shapes]);
 
   return (
     <canvas
-      width={diamension.width}
-      height={diamension.height}
+      width={window.innerWidth}
+      height={window.innerHeight}
       ref={canvasElement}
-      style={{ width: "100%", height: "100%" }}
     />
   );
-}
+};
 
 export default Canvas;

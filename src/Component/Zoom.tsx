@@ -1,8 +1,15 @@
 import { Plus, Minus } from "lucide-react";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  InitialState,
+  decreaseScale,
+  increaseScale,
+  resetScale,
+} from "../features/canvasSlice";
 
 function Zoom() {
-  const [scaleFactor, setScaleFactor] = useState(10);
+  const dispatch = useDispatch();
+  const scale = useSelector((state: InitialState) => state.canvasState.scale);
 
   return (
     <div
@@ -16,15 +23,21 @@ function Zoom() {
     >
       <div
         className=" w-full h-full p-2 hover:bg-blue-100 hover:cursor-pointer rounded-l-lg flex justify-center items-center"
-        onClick={() => setScaleFactor((prev) => prev + 10)}
+        onClick={() => dispatch(increaseScale())}
       >
         <Plus />
       </div>
-      <div className="w-full h-full p-2 hover:cursor-pointer rounded-lg flex justify-center items-center select-none    ">
-        {scaleFactor}%
+      <div
+        className="w-full h-full p-2 hover:cursor-pointer rounded-lg flex justify-center items-center select-none 
+      "
+        onClick={() => {
+          dispatch(resetScale());
+        }}
+      >
+        {scale}%
       </div>
       <div
-        onClick={() => setScaleFactor((prev) => (prev >= 20 ? prev - 10 : 10))}
+        onClick={() => dispatch(decreaseScale())}
         className="w-full h-full p-2 hover:bg-blue-100 hover:cursor-pointer rounded-r-lg flex justify-center items-center"
       >
         <Minus />
