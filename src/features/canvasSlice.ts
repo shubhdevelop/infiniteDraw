@@ -1,33 +1,58 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
+import { AllShape } from "../utils/shapeTypes";
 
-type ToolState = {
-  active:
-    | "ellipse"
-    | "line"
-    | "hand"
-    | "rect"
-    | "arrow"
-    | "text"
-    | "image"
-    | "eraser"
-    | "pointer"
-    | "diamond"
-    | "pen";
+export type Active =
+  | "ellipse"
+  | "line"
+  | "hand"
+  | "rect"
+  | "arrow"
+  | "text"
+  | "image"
+  | "eraser"
+  | "pointer"
+  | "diamond"
+  | "pen";
+
+export type ToolState = {
+  active: Active;
+};
+
+export type MouseState = {
+  mouseX: number;
+  mouseY: number;
 };
 
 type CanvasState = {
   pan: { x: number; y: number };
   scale: number; //Percent
   locked: boolean;
-  elements: {}[];
+  elements: AllShape[];
 };
 
 export type InitialState = {
   canvasState: CanvasState;
   toolState: ToolState;
+  mouseState: MouseState;
+  activeElement: AllShape;
 };
 
 const initialState: InitialState = {
+  activeElement: {
+    type: "rect",
+    height: 500,
+    width: 100,
+    fillColor: "red",
+    strokeColor: "",
+    strokeWidth: 0,
+    innerText: "",
+    posX: 100,
+    posY: 100,
+    id: nanoid(),
+    rotation: 0,
+    selected: true,
+  },
   canvasState: {
     pan: {
       x: 10,
@@ -35,10 +60,29 @@ const initialState: InitialState = {
     },
     scale: 100, //percent
     locked: false,
-    elements: [{}],
+    elements: [
+      {
+        type: "rect",
+        height: 500,
+        width: 100,
+        fillColor: "red",
+        strokeColor: "",
+        strokeWidth: 0,
+        innerText: "",
+        posX: 100,
+        posY: 100,
+        id: nanoid(),
+        rotation: 0,
+        selected: true,
+      },
+    ],
   },
   toolState: {
     active: "hand",
+  },
+  mouseState: {
+    mouseX: 0,
+    mouseY: 0,
   },
 };
 
@@ -71,6 +115,15 @@ export const canvasSlice = createSlice({
     setActiveTool: ({ toolState }, action) => {
       toolState.active = action.payload;
     },
+    resetCanvas: ({ canvasState }) => {
+      canvasState.elements = [];
+    },
+    setPan: ({ canvasState }, { payload }) => {
+      canvasState.pan = {
+        x: payload.x,
+        y: payload.y,
+      };
+    },
   },
 });
 
@@ -80,5 +133,6 @@ export const {
   decreaseScale,
   resetScale,
   toggleLock,
+  setPan,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;

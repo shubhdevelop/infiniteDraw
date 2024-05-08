@@ -11,10 +11,12 @@ import {
   LockKeyhole,
   MousePointer,
   LockKeyholeOpen,
+  Text,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   InitialState,
+  Active,
   setActiveTool,
   toggleLock,
 } from "../features/canvasSlice";
@@ -23,7 +25,7 @@ export default function Toolbar() {
   const { locked } = useSelector((state: InitialState) => state.canvasState);
   const { active } = useSelector((state: InitialState) => state.toolState);
   const dispatch = useDispatch();
-  const handleClick = (type: string) => {
+  const handleClick = (type: Active) => {
     dispatch(setActiveTool(type));
   };
   return (
@@ -179,6 +181,20 @@ export default function Toolbar() {
             <Pen width={20} height={20} fill={"blue"} fillOpacity={0.2} />
           ) : (
             <Pen width={20} height={20} />
+          )}
+        </div>
+        <div
+          onClick={() => {
+            handleClick("text");
+          }}
+          className={`md:w-10 w-7 h-10 p-2 ${
+            active == "text" ? "bg-blue-100" : ""
+          } hover:bg-blue-100 hover:cursor-pointer rounded-lg flex justify-center items-center`}
+        >
+          {active == "text" ? (
+            <Text width={20} height={20} fill={"blue"} fillOpacity={0.2} />
+          ) : (
+            <Text width={20} height={20} />
           )}
         </div>
         <div

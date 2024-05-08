@@ -24,7 +24,7 @@ function drawHandler(
   //leftMiddle
   ctx.fillRect(
     posX - handleSize / 2 - 4,
-    posY + width / 2 - 4,
+    posY + height / 2 - 4,
     handleSize + 3,
     handleSize + 3
   );
@@ -66,7 +66,7 @@ function drawHandler(
   //right mid
   ctx.fillRect(
     posX + width - handleSize / 2 + 1,
-    posY + width / 2 - 4,
+    posY + height / 2 - 4,
     handleSize + 3,
     handleSize + 3
   );
@@ -74,7 +74,7 @@ function drawHandler(
   //bottom right
   ctx.fillRect(
     posX + width - handleSize / 2 + 1,
-    posY + width - handleSize / 2 + 1,
+    posY + height - handleSize / 2 + 1,
     handleSize + 3,
     handleSize + 3
   );
@@ -82,7 +82,7 @@ function drawHandler(
   //bottom left
   ctx.fillRect(
     posX - handleSize / 2 - 4,
-    posY + width - handleSize / 2 + 1,
+    posY + height - handleSize / 2 + 1,
     handleSize + 3,
     handleSize + 3
   );
@@ -90,7 +90,7 @@ function drawHandler(
   //bottom mid
   ctx.fillRect(
     posX + width / 2 - 4,
-    posY + width - handleSize / 2 + 1,
+    posY + height - handleSize / 2 + 1,
     handleSize + 3,
     handleSize + 3
   );

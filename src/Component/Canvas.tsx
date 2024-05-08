@@ -1,32 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { clearCanvas } from "../utils/canvas";
-import { AllShape, Rect } from "../utils/shapeTypes";
 import { useSelector } from "react-redux";
 import { InitialState } from "../features/canvasSlice";
-import { nanoid } from "nanoid";
-import { drawRect } from "../utils/paint";
-
-const square: Rect = {
-  type: "rect",
-  height: 100,
-  width: 100,
-  fillColor: "red",
-  strokeColor: "",
-  strokeWidth: 0,
-  innerText: "",
-  posX: 10,
-  posY: 10,
-  id: nanoid(),
-  rotation: 0,
-  selected: false,
-};
+import { updateCanvas } from "../utils/paint";
 
 const Canvas = () => {
   const { scale, pan } = useSelector(
     (state: InitialState) => state.canvasState
   );
 
-  const [shapes] = useState<AllShape[]>([square]);
+  const { elements } = useSelector((state: InitialState) => state.canvasState);
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvas = canvasElement!.current;
   const ctx = canvas?.getContext("2d");
@@ -72,35 +55,29 @@ const Canvas = () => {
   // };
 
   useEffect(() => {
-    // the Scale and pan
-    if (ctx) {
-      ctx.setTransform(scale / 100, 0, 0, scale / 100, pan.x, pan.y);
-    }
-
-    //Draws All the shapes
-    if (ctx) {
-      shapes.forEach((shape) => {
-        switch (shape.type) {
-          case "rect":
-            drawRect(ctx, shape);
-            break;
-          default:
-            break;
+    if (canvas && ctx) {
+      // the Scale and pan
+      if (ctx) {
+        function scaleAndPan() {
+          ctx?.setTransform(scale / 100, 0, 0, scale / 100, pan.x, pan.y);
+          ctx?.save();
         }
-      });
-    }
-    //handle what happens when mouse is clicked on canvas
-    // if (canvas) {
-    //   canvas.addEventListener("click", handleClick);
-    // }
+        scaleAndPan();
+        requestAnimationFrame(scaleAndPan);
+      }
 
+      //Draws All the shapes
+      if (ctx) {
+        updateCanvas(ctx, elements);
+      }
+    }
     return () => {
       if (ctx) {
         clearCanvas(ctx, window.innerWidth, window.innerHeight);
       }
       // canvas?.removeEventListener("click", handleClick);
     };
-  }, [pan, scale, shapes]);
+  }, [pan, scale, elements]);
 
   return (
     <canvas

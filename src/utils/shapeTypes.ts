@@ -1,8 +1,6 @@
-import { nanoid } from "nanoid";
-
 export interface Shape {
   id: string; //nanoid
-  type: "rect" | "line" | "ellipse" | "diamond" | "arrow" | "line";
+  type: "rect" | "line" | "ellipse" | "diamond" | "arrow" | "image" | "pen";
   posX: number;
   posY: number;
   strokeColor: string;
@@ -19,7 +17,7 @@ export interface Shape {
   isMouseInsideSelectableArea?(mouseX: number, mouseY: number): boolean;
 }
 
-interface Polygon extends Shape {
+export interface Polygon extends Shape {
   fillColor: string;
   innerText: string;
 }
@@ -32,10 +30,15 @@ export interface Rect extends Polygon {
 
 export interface Ellipse extends Polygon {
   type: "ellipse";
+  radius: number; // radius of the circle'
+}
+
+export interface Diamond extends Polygon {
+  type: "diamond";
   radius: number; // radius of the circle
 }
 
-interface Line extends Shape {
+export interface Line extends Shape {
   type: "line" | "arrow";
   endX: number;
   endY: number;
@@ -43,102 +46,75 @@ interface Line extends Shape {
   strokeWidth: number;
 }
 
-interface Arrow extends Line {
+export interface Arrow extends Line {
   type: "arrow";
   middleText: String;
 }
 
-export type AllShape = Arrow | Line | Rect | Ellipse;
-
-export class Circle implements Ellipse {
-  type: "ellipse";
-  posX: number;
-  posY: number;
-  strokeColor: string;
-  strokeWidth: number;
-  selected: boolean;
-  rotation: number;
-  radius: number;
-  innerText: string;
-  fillColor: string;
-  id: string;
-  constructor(
-    posX: number,
-    posY: number,
-    radius: number,
-    strokeColor: string,
-    strokeWidth: number,
-    selected: boolean,
-    rotation: number,
-    innerText: string,
-    fillColor: string
-  ) {
-    this.type = "ellipse";
-    this.posX = posX;
-    this.posY = posY;
-    this.strokeColor = strokeColor;
-    this.strokeWidth = strokeWidth;
-    this.selected = selected;
-    this.rotation = rotation;
-    this.radius = radius;
-    this.innerText = innerText;
-    this.fillColor = fillColor;
-    this.id = nanoid();
-  }
-
-  isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
-    var distance = Math.sqrt(
-      Math.pow(mouseX - this.posX, 2) + Math.pow(mouseY - this.posY, 2)
-    );
-    return distance <= this.radius;
-  }
+export interface Image extends Shape {
+  type: "image";
+  src: string;
 }
 
-export class Rectangle implements Rect {
-  type: "rect";
-  posX: number;
-  posY: number;
-  strokeColor: string;
-  strokeWidth: number;
-  selected: boolean;
-  rotation: number;
-  innerText: string;
-  fillColor: string;
-  height: number;
-  width: number;
-  id: string;
-  constructor(
-    posX: number,
-    posY: number,
-    height: number,
-    width: number,
-    strokeColor: string,
-    strokeWidth: number,
-    selected: boolean,
-    rotation: number,
-    innerText: string,
-    fillColor: string
-  ) {
-    this.type = "rect";
-    this.posX = posX;
-    this.posY = posY;
-    this.width = width;
-    this.height = height;
-    this.strokeColor = strokeColor;
-    this.strokeWidth = strokeWidth;
-    this.selected = selected;
-    this.rotation = rotation;
-    this.innerText = innerText;
-    this.fillColor = fillColor;
-    this.id = nanoid();
-  }
-
-  isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
-    return (
-      mouseX >= this.posX &&
-      mouseX <= this.posX + this.width &&
-      mouseY >= this.posY &&
-      mouseY <= this.posY + this.height
-    );
-  }
+export interface Pen extends Shape {
+  type: "pen";
+  points: { x: number; y: number }[];
 }
+
+export type AllShape = Arrow | Line | Rect | Ellipse | Diamond | Image | Pen;
+
+// export class Circle {
+//   isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
+//     var distance = Math.sqrt(
+//       Math.pow(mouseX - this.posX, 2) + Math.pow(mouseY - this.posY, 2)
+//     );
+//     return distance <= this.radius;
+//   }
+// }
+
+// export class Rectangle {
+//   isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
+//     return (
+//       mouseX >= this.posX &&
+//       mouseX <= this.posX + this.width &&
+//       mouseY >= this.posY &&
+//       mouseY <= this.posY + this.height
+//     );
+//   }
+// }
+
+export type AllProperties = [
+  StrokeColor,
+  Background,
+  FillStyle,
+  StrokeWidth,
+  StrokeStyle,
+  EdgeStyle,
+  FontSize,
+  FontFamily,
+  TextAlign,
+  Opacity
+];
+
+export type StrokeColor =
+  | string
+  | "black"
+  | "red"
+  | "green"
+  | "blue"
+  | "orange";
+export type Background =
+  | string
+  | "transparent"
+  | "red"
+  | "green"
+  | "blue"
+  | "orange";
+export type FillStyle = "solid" | "hachure" | "cross-hatch";
+export type StrokeWidth = "thin" | "bold" | "extraBold";
+export type StrokeStyle = "solid" | "dashed" | "dotted";
+export type EdgeStyle = "sharp" | "rounded";
+export type FontSize = "small" | "medium" | "large" | "extraLarge";
+export type FontFamily = "normal" | "paint" | "code";
+export type TextAlign = "left" | "middle" | "rijght";
+export type Opacity = number;
