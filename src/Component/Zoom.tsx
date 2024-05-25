@@ -2,9 +2,9 @@ import { Plus, Minus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   InitialState,
-  decreaseScale,
   increaseScale,
   resetScale,
+  decreaseScale,
 } from "../features/canvasSlice";
 
 function Zoom() {

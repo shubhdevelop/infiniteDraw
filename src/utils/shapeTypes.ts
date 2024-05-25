@@ -1,12 +1,22 @@
 export interface Shape {
   id: string; //nanoid
-  type: "rect" | "line" | "ellipse" | "diamond" | "arrow" | "image" | "pen";
+  type:
+    | "rect"
+    | "line"
+    | "ellipse"
+    | "diamond"
+    | "arrow"
+    | "image"
+    | "pen"
+    | "text";
   posX: number;
   posY: number;
   strokeColor: string;
-  strokeWidth: number;
+  strokeWidth: StrokeWidth;
+
   selected: boolean;
   rotation: number;
+  opacity: Opacity;
   getHandleBar?(): {
     posX: number;
     posY: number;
@@ -18,8 +28,14 @@ export interface Shape {
 }
 
 export interface Polygon extends Shape {
-  fillColor: string;
+  fillColor: Background;
   innerText: string;
+  edgeStyle: EdgeStyle;
+  fontSize: FontSize;
+  fontFamily: FontFamily;
+  textAlign: TextAlign;
+  fillStyle: FillStyle;
+  strokeStyle: StrokeStyle;
 }
 
 export interface Rect extends Polygon {
@@ -30,25 +46,33 @@ export interface Rect extends Polygon {
 
 export interface Ellipse extends Polygon {
   type: "ellipse";
-  radius: number; // radius of the circle'
+  radiusX: number;
+  radiusY: number;
 }
 
 export interface Diamond extends Polygon {
   type: "diamond";
   radius: number; // radius of the circle
+  edgeStyle: EdgeStyle;
 }
 
 export interface Line extends Shape {
-  type: "line" | "arrow";
+  type: "line";
+  length: number;
+  middlePoint: number;
+  strokeStyle: StrokeStyle;
+}
+
+export interface Arrow extends Shape {
+  type: "arrow";
   endX: number;
   endY: number;
   middlePoint: number;
-  strokeWidth: number;
-}
-
-export interface Arrow extends Line {
-  type: "arrow";
-  middleText: String;
+  innerText: string;
+  arrowHeadRight: ArrowHeadRight;
+  arrowHeadLeft: ArrowHeadLeft;
+  fontSize: FontSize;
+  fontFamily: FontFamily;
 }
 
 export interface Image extends Shape {
@@ -61,60 +85,52 @@ export interface Pen extends Shape {
   points: { x: number; y: number }[];
 }
 
-export type AllShape = Arrow | Line | Rect | Ellipse | Diamond | Image | Pen;
+export interface Text extends Shape {
+  textAlign: TextAlign;
+  fontSize: FontSize;
+  fontFamily: FontFamily;
+  type: "text";
+  innerText: string;
+}
 
-// export class Circle {
-//   isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
-//     var distance = Math.sqrt(
-//       Math.pow(mouseX - this.posX, 2) + Math.pow(mouseY - this.posY, 2)
-//     );
-//     return distance <= this.radius;
-//   }
-// }
+export type AllShape =
+  | Arrow
+  | Line
+  | Rect
+  | Ellipse
+  | Diamond
+  | Image
+  | Pen
+  | Text;
 
-// export class Rectangle {
-//   isMouseInsideSelectableArea(mouseX: number, mouseY: number): boolean {
-//     return (
-//       mouseX >= this.posX &&
-//       mouseX <= this.posX + this.width &&
-//       mouseY >= this.posY &&
-//       mouseY <= this.posY + this.height
-//     );
-//   }
-// }
+export type AnyIndividualProperty =
+  | { fillColor: Background }
+  | { fillStyle: FillStyle }
+  | { strokeColor: StrokeColor }
+  | { strokeWidth: StrokeWidth }
+  | { strokeStyle: StrokeStyle }
+  | { edgeStyle: EdgeStyle }
+  | { fontSize: FontSize }
+  | { fontFamily: FontFamily }
+  | { textAlign: TextAlign }
+  | { opacity: Opacity }
+  | { arrowHeadRight: ArrowHeadRight }
+  | { arrowHeadLeft: ArrowHeadLeft };
 
-export type AllProperties = [
-  StrokeColor,
-  Background,
-  FillStyle,
-  StrokeWidth,
-  StrokeStyle,
-  EdgeStyle,
-  FontSize,
-  FontFamily,
-  TextAlign,
-  Opacity
-];
-
-export type StrokeColor =
-  | string
-  | "black"
-  | "red"
-  | "green"
-  | "blue"
-  | "orange";
+export type StrokeColor = "black" | "red" | "purple" | "blue" | "orange";
 export type Background =
-  | string
   | "transparent"
-  | "red"
-  | "green"
-  | "blue"
-  | "orange";
-export type FillStyle = "solid" | "hachure" | "cross-hatch";
-export type StrokeWidth = "thin" | "bold" | "extraBold";
+  | "#bbf7d0" //green
+  | "#fef08a" //yellow
+  | "#bfdbfe" //blue
+  | "#fecaca"; //pink
+export type FillStyle = "solid" | "hachure";
+export type StrokeWidth = 1 | 3 | 6;
 export type StrokeStyle = "solid" | "dashed" | "dotted";
 export type EdgeStyle = "sharp" | "rounded";
-export type FontSize = "small" | "medium" | "large" | "extraLarge";
+export type FontSize = 12 | 16 | 20 | 24;
 export type FontFamily = "normal" | "paint" | "code";
-export type TextAlign = "left" | "middle" | "rijght";
+export type TextAlign = "left" | "center" | "right";
 export type Opacity = number;
+export type ArrowHeadRight = "";
+export type ArrowHeadLeft = "";

@@ -1,0 +1,150 @@
+import { Line } from "../utils/shapeTypes";
+import { getFontDisplayProperties } from "./text";
+
+function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
+  let { type, width, height, posX, posY } = element;
+
+  const handleSize = 6;
+
+  if (type == "rect") {
+    width = element.width;
+    height = element.height;
+    posX = element.posX;
+    posY = element.posY;
+  }
+
+  if (type == "ellipse") {
+    const size = Math.max(element.radiusX, element.radiusY);
+    height = size * 2;
+    width = size * 2;
+    posX = element.posX - size;
+    posY = element.posY - size;
+  }
+
+  if (type == "text") {
+    const font = getFontDisplayProperties(element);
+    ctx.save();
+    ctx.font = font;
+    width = ctx.measureText(element.innerText).width;
+    height = parseInt(ctx.font);
+    posX = element.posX - width / 2;
+    posY = element.posY - height / 2;
+    ctx.restore();
+  }
+  if (type == "line") {
+    const { length }: Line = element;
+    const angleInRadians = 180 * (Math.PI / 180);
+    // Calculate the end point (x, y)
+    const endX = posX + length * Math.cos(angleInRadians);
+    const endY = posY + length * Math.sin(angleInRadians);
+
+    width = length + 10;
+    height = 10;
+    posX = Math.min(posX, endX) - 4;
+    posY = Math.min(posY, endY) - 6;
+  }
+
+  ctx.save();
+  //handle
+  ctx.strokeStyle = "#rgb(56, 56, 174)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(posX - 3, posY - 3, width + 6, height + 6);
+
+  ctx.fillStyle = "blue";
+
+  //top left
+  ctx.fillRect(
+    //
+    posX - handleSize / 2 - 4,
+    posY - handleSize / 2 - 4,
+    handleSize,
+    handleSize
+  );
+
+  //leftMiddle
+  ctx.fillRect(
+    posX - handleSize / 2 - 4,
+    posY + height / 2 - 4,
+    handleSize,
+    handleSize
+  );
+
+  //top Middle
+  ctx.fillRect(
+    //
+    posX + width / 2 - 3,
+    posY - handleSize / 2 - 4,
+    handleSize,
+    handleSize
+  );
+
+  //rotation handler
+  {
+    ctx.beginPath();
+    ctx.moveTo(posX + width / 2, posY - handleSize / 2);
+    ctx.lineTo(posX + width / 2, posY - 30);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.arc(posX + width / 2, posY - 30, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  ctx.fillStyle = "blue";
+  //top right
+  ctx.fillRect(
+    posX + width - handleSize / 2 + 3,
+    posY - handleSize / 2 - 4,
+    handleSize,
+    handleSize
+  );
+
+  //right mid
+  ctx.fillRect(
+    posX + width - handleSize / 2 + 3,
+    posY + height / 2 - 4,
+    handleSize,
+    handleSize
+  );
+
+  //bottom right
+  ctx.fillRect(
+    posX + width - handleSize / 2 + 3,
+    posY + height - handleSize / 2 + 3,
+    handleSize,
+    handleSize
+  );
+
+  //bottom left
+  ctx.fillRect(
+    posX - handleSize / 2 - 3,
+    posY + height - handleSize / 2 + 3,
+    handleSize,
+    handleSize
+  );
+
+  //bottom mid
+  ctx.fillRect(
+    posX + width / 2 - 4,
+    posY + height - handleSize / 2 + 3,
+    handleSize,
+    handleSize
+  );
+
+  ctx.restore();
+}
+
+function getHandleBar(shape: any) {
+  return {
+    posX: shape.posX,
+    posY: shape.posY,
+    width: shape.width,
+    height: shape.height,
+  };
+}
+
+export { drawHandler, getHandleBar };
