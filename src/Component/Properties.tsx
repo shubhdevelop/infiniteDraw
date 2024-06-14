@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 import {
-  InitialState,
   changeActiveElementProperties,
+  duplicateElement,
+  removeElement,
 } from "../features/canvasSlice";
 import {
   AlignCenter,
@@ -36,7 +37,8 @@ import {
   FontFamily as FFamily,
   TextAlign as TAlign,
   Opacity as OOpacity,
-} from "../utils/shapeTypes";
+} from "../types/propertiesTypes";
+import { InitialState } from "../types/stateTypes";
 
 type Props = {
   children: string | JSX.Element | JSX.Element[];
@@ -346,6 +348,7 @@ function Opacity() {
         }}
         className="w-full"
         type="range"
+        defaultValue={100}
         min={0}
         max={100}
       />
@@ -393,17 +396,25 @@ function Layers() {
   );
 }
 function Actions() {
+  const dispatch = useDispatch();
+  function deleteElement() {
+    dispatch(removeElement());
+  }
+
+  function duplicate() {
+    dispatch(duplicateElement());
+  }
   return (
     <div className="w-full px-2 mb-2">
       <p className="py-1">Action</p>
       <Options>
-        <Option>
+        <Option clickHandler={() => deleteElement()}>
           <Trash2 width={20} height={20} color="black" />
         </Option>
         <Option>
           <Link width={20} height={20} color="black"></Link>
         </Option>
-        <Option>
+        <Option clickHandler={() => duplicate()}>
           <Copy width={20} height={20} color="black"></Copy>
         </Option>
       </Options>

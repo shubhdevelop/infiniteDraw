@@ -2,29 +2,31 @@ import { useEffect, useRef } from "react";
 import { clearCanvas } from "../utils/canvas";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  InitialState,
   addElement,
-  // clearActiveElement,
   clearHoverElement,
+  decreaseScale,
   dummyShapes,
-  // setActiveElement,
+  increaseScale,
+  removeElement,
   setActiveTool,
   setElementPosition,
   setHoverElement,
   setHoverElementActive,
+  setPan,
 } from "../features/canvasSlice";
 import { updateCanvas } from "../utils/renderer";
 import { drawHandler } from "../elements/drawHandler";
 import { isPointInsideRotatedEllipse } from "../elements/ellipse";
 import { isMouseInsideRect } from "../elements/rect";
-import { isMouseInsideText } from "../elements/text";
+import { addTextToCanvas, isMouseInsideText } from "../elements/text";
 import { isPointOnLine } from "../elements/line";
+import { isMouseInsideImage } from "../elements/image";
+import { InitialState } from "../types/stateTypes";
 
 const Canvas = () => {
   const { scale, pan } = useSelector(
     (state: InitialState) => state.canvasState
   );
-
   const activeElement = useSelector(
     (state: InitialState) => state.activeElement
   );
@@ -95,15 +97,56 @@ const Canvas = () => {
             dispatch(setHoverElement({ id: shape.id }));
           }
         }
+        if (shape.type == "image") {
+          if (isMouseInsideImage(event, canvas, scale / 100, pan, shape)) {
+            console.log(shape.id);
+
+            dispatch(setHoverElement({ id: shape.id }));
+          }
+        }
       });
     }
   };
 
+  const handleDoubleclick = (event: MouseEvent) => {
+    if (canvas) {
+      addTextToCanvas(canvas, event, pan, scale, dispatch);
+    }
+  };
+
+  const handlePanAndZoom = (event: WheelEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.ctrlKey) {
+      if (event.deltaY < 0) {
+        dispatch(decreaseScale());
+      }
+      if (event.deltaY > 0) {
+        dispatch(increaseScale());
+      }
+    } else {
+      dispatch(setPan({ x: pan.x - event.deltaX, y: pan.y - event.deltaY }));
+    }
+  };
+
+  const handleShortcuts = (event: KeyboardEvent) => {
+    if (event.key === "Delete" || event.key === "Backspace") {
+      dispatch(removeElement());
+    }
+  };
   //Loading initial data;
   useEffect(() => {
     dispatch(addElement(dummyShapes));
     dispatch(setActiveTool("pointer"));
   }, []);
+
+  //Draw Handlers on Active Elements
+  useEffect(() => {
+    if (activeElement.length > 0 && ctx) {
+      const element = activeElement[0];
+      drawHandler(ctx, element);
+    }
+  }, [activeElement, allElements]);
 
   useEffect(() => {
     if (hoverElement.length > 0 && activeTool == "pointer" && canvas) {
@@ -114,14 +157,6 @@ const Canvas = () => {
       canvas.style.cursor = "pointer";
     }
   }, [hoverElement]);
-
-  //Draw Handlers on Active Elements
-  useEffect(() => {
-    if (activeElement.length > 0 && ctx) {
-      const element = activeElement[0];
-      drawHandler(ctx, element);
-    }
-  }, [activeElement, allElements]);
 
   //Scaling Panning Drawing and moving elements on the Canvas
   useEffect(() => {
@@ -135,7 +170,8 @@ const Canvas = () => {
     canvas?.addEventListener("mousemove", handleHoverOverElement);
     canvas?.addEventListener("mousedown", handleClick);
     canvas?.addEventListener("mousemove", handleMoveElement);
-
+    canvas?.addEventListener("dblclick", handleDoubleclick);
+    canvas?.addEventListener("wheel", handlePanAndZoom);
     //Draws All the shapes
     if (ctx) {
       updateCanvas(ctx, allElements);
@@ -148,15 +184,20 @@ const Canvas = () => {
       canvas?.removeEventListener("mousedown", handleClick);
       canvas?.removeEventListener("mousemove", handleMoveElement);
       canvas?.removeEventListener("mousemove", handleHoverOverElement);
+      canvas?.removeEventListener("dblclick", handleDoubleclick);
+      canvas?.removeEventListener("wheel", handlePanAndZoom);
+      canvas?.removeEventListener("keydown", handleShortcuts);
     };
   }, [pan, scale, allElements, activeElement]);
 
   return (
-    <canvas
-      width={window.innerWidth}
-      height={window.innerHeight}
-      ref={canvasElement}
-    />
+    <>
+      <canvas
+        width={window.innerWidth}
+        height={window.innerHeight}
+        ref={canvasElement}
+      />
+    </>
   );
 };
 

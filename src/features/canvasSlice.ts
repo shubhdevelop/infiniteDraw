@@ -1,82 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
-import {
-  AllShape,
-  AnyIndividualProperty,
-  Background,
-  EdgeStyle,
-  FillStyle,
-  FontFamily,
-  FontSize,
-  Opacity,
-  StrokeColor,
-  StrokeStyle,
-  StrokeWidth,
-  TextAlign,
-} from "../utils/shapeTypes";
-import {
-  increaseS,
-  decreaseS,
-  resetS,
-  toggleL,
-  resetP,
-  setP,
-} from "./reducers/canvasState.r";
-
-export type Active =
-  | "ellipse"
-  | "line"
-  | "hand"
-  | "rect"
-  | "arrow"
-  | "text"
-  | "image"
-  | "eraser"
-  | "pointer"
-  | "diamond"
-  | "pen"
-  | "";
-
-export type ToolState = {
-  active: Active;
-};
-
-export type MouseState = {
-  mouseX: number;
-  mouseY: number;
-};
-
-export type Pan = { x: number; y: number };
-export type CanvasState = {
-  pan: Pan;
-  scale: number; //Percent
-  locked: boolean;
-};
-
-export type GlobalProperties = {
-  fillStyle: FillStyle;
-  strokeWidth: StrokeWidth;
-  strokeStyle: StrokeStyle;
-  strokeColor: StrokeColor;
-  backgroundColor: Background;
-  edgeStyle: EdgeStyle;
-  fontSize: FontSize;
-  fontFamily: FontFamily;
-  textAlign: TextAlign;
-  opacity: Opacity;
-  arrowHeadLeft: "arrow";
-  arrowHeadRight: "arrow";
-};
-
-export type InitialState = {
-  canvasState: CanvasState;
-  toolState: ToolState;
-  mouseState: MouseState;
-  activeElement: AllShape[];
-  globalProperties: GlobalProperties;
-  allElements: AllShape[];
-  hoverElement: AllShape[];
-};
+import { AnyIndividualProperty } from "../types/propertiesTypes";
+import { AllShape } from "../types/shapeTypes";
+import { InitialState, Pan } from "../types/stateTypes";
+import { SCALE_FACTOR } from "../utils/constant";
 
 const initialState: InitialState = {
   hoverElement: [],
@@ -84,7 +11,7 @@ const initialState: InitialState = {
   canvasState: {
     pan: {
       x: 100,
-      y: 90,
+      y: 100,
     },
     scale: 100, //percent
     locked: false,
@@ -117,12 +44,37 @@ export const canvasSlice = createSlice({
   name: "canvasState",
   initialState,
   reducers: {
-    increaseScale: increaseS,
-    decreaseScale: decreaseS,
-    resetScale: resetS,
-    toggleLock: toggleL,
-    resetPan: resetP,
-    setPan: setP,
+    increaseScale: ({ canvasState }: InitialState) => {
+      if (canvasState.scale <= 600 - SCALE_FACTOR) {
+        const scale = canvasState.scale + SCALE_FACTOR;
+        canvasState.scale = scale;
+      } else {
+        canvasState.scale = 600;
+      }
+    },
+    decreaseScale: ({ canvasState }: InitialState) => {
+      if (canvasState.scale >= 10 + SCALE_FACTOR) {
+        const scale = canvasState.scale - SCALE_FACTOR;
+        canvasState.scale = scale;
+      } else {
+        canvasState.scale = 10;
+      }
+    },
+    resetScale: ({ canvasState }: InitialState) => {
+      canvasState.scale = 100;
+    },
+    toggleLock: ({ canvasState }: InitialState) => {
+      canvasState.locked = !canvasState.locked;
+    },
+    resetPan: ({ canvasState }: InitialState) => {
+      canvasState.pan = { x: 100, y: 100 };
+    },
+    setPan: ({ canvasState }: InitialState, action: PayloadAction<Pan>) => {
+      canvasState.pan = {
+        x: action.payload.x,
+        y: action.payload.y,
+      };
+    },
     setActiveTool: ({ toolState }, action) => {
       toolState.active = action.payload;
     },
@@ -173,7 +125,10 @@ export const canvasSlice = createSlice({
         posX: 0,
         posY: 0,
       };
-      if (state.activeElement[0].type == "rect") {
+      if (
+        state.activeElement[0].type == "rect" ||
+        state.activeElement[0].type == "image"
+      ) {
         newCords.posX = payload.posX - state.activeElement[0].width / 2;
         newCords.posY = payload.posY - state.activeElement[0].height / 2;
       }
@@ -212,6 +167,27 @@ export const canvasSlice = createSlice({
         state.activeElement = [];
       }
     },
+    addNewElement(state, action) {
+      state.allElements.push(action.payload);
+      state.toolState.active = "pointer";
+    },
+    removeElement(state) {
+      state.allElements = state.allElements.filter(
+        (element) => element.id !== state.activeElement[0].id
+      );
+      state.activeElement = [];
+    },
+    duplicateElement(state) {
+      const activeElement = state.activeElement[0];
+      const newElement = {
+        ...activeElement,
+        id: nanoid(),
+        posX: activeElement.posX + 15,
+        posY: activeElement.posY + 15,
+      };
+      state.allElements.push(newElement);
+      state.activeElement[0] = newElement;
+    },
   },
 });
 
@@ -231,6 +207,9 @@ export const {
   setHoverElement,
   clearHoverElement,
   setHoverElementActive,
+  addNewElement,
+  removeElement,
+  duplicateElement,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
@@ -297,21 +276,6 @@ export const dummyShapes: AllShape[] = [
     fillStyle: "solid",
     opacity: 100,
     strokeStyle: "solid",
-  },
-  {
-    type: "text",
-    strokeColor: "blue",
-    strokeWidth: 3,
-    innerText: "This is an text Sample",
-    posX: 500,
-    posY: 400,
-    id: nanoid(),
-    rotation: 100,
-    selected: true,
-    fontFamily: "code",
-    fontSize: 12,
-    textAlign: "center",
-    opacity: 100,
   },
   {
     type: "line",

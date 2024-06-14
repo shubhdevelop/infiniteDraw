@@ -1,4 +1,4 @@
-import { Rect } from "../utils/shapeTypes";
+import { Rect } from "../types/shapeTypes";
 
 function drawRect(ctx: CanvasRenderingContext2D, rect: Rect) {
   const {

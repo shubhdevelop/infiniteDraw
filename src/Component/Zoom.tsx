@@ -5,6 +5,7 @@ import {
   increaseScale,
   resetScale,
   decreaseScale,
+  resetPan,
 } from "../features/canvasSlice";
 
 function Zoom() {
@@ -32,6 +33,7 @@ function Zoom() {
       "
         onClick={() => {
           dispatch(resetScale());
+          dispatch(resetPan());
         }}
       >
         {scale}%

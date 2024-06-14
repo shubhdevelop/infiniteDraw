@@ -1,3 +1,17 @@
+import {
+  StrokeWidth,
+  Opacity,
+  Background,
+  EdgeStyle,
+  FontSize,
+  FontFamily,
+  TextAlign,
+  FillStyle,
+  StrokeStyle,
+  ArrowHeadRight,
+  ArrowHeadLeft,
+} from "./propertiesTypes";
+
 export interface Shape {
   id: string; //nanoid
   type:
@@ -13,18 +27,10 @@ export interface Shape {
   posY: number;
   strokeColor: string;
   strokeWidth: StrokeWidth;
-
   selected: boolean;
   rotation: number;
   opacity: Opacity;
-  getHandleBar?(): {
-    posX: number;
-    posY: number;
-    width: number;
-    height: number;
-  };
-  draw?(ctx: CanvasRenderingContext2D): void;
-  isMouseInsideSelectableArea?(mouseX: number, mouseY: number): boolean;
+  strokeStyle: StrokeStyle;
 }
 
 export interface Polygon extends Shape {
@@ -75,9 +81,11 @@ export interface Arrow extends Shape {
   fontFamily: FontFamily;
 }
 
-export interface Image extends Shape {
+export interface Img extends Shape {
   type: "image";
-  src: string;
+  src: ImageBitmap;
+  width: number;
+  height: number;
 }
 
 export interface Pen extends Shape {
@@ -99,38 +107,6 @@ export type AllShape =
   | Rect
   | Ellipse
   | Diamond
-  | Image
+  | Img
   | Pen
   | Text;
-
-export type AnyIndividualProperty =
-  | { fillColor: Background }
-  | { fillStyle: FillStyle }
-  | { strokeColor: StrokeColor }
-  | { strokeWidth: StrokeWidth }
-  | { strokeStyle: StrokeStyle }
-  | { edgeStyle: EdgeStyle }
-  | { fontSize: FontSize }
-  | { fontFamily: FontFamily }
-  | { textAlign: TextAlign }
-  | { opacity: Opacity }
-  | { arrowHeadRight: ArrowHeadRight }
-  | { arrowHeadLeft: ArrowHeadLeft };
-
-export type StrokeColor = "black" | "red" | "purple" | "blue" | "orange";
-export type Background =
-  | "transparent"
-  | "#bbf7d0" //green
-  | "#fef08a" //yellow
-  | "#bfdbfe" //blue
-  | "#fecaca"; //pink
-export type FillStyle = "solid" | "hachure";
-export type StrokeWidth = 1 | 3 | 6;
-export type StrokeStyle = "solid" | "dashed" | "dotted";
-export type EdgeStyle = "sharp" | "rounded";
-export type FontSize = 12 | 16 | 20 | 24;
-export type FontFamily = "normal" | "paint" | "code";
-export type TextAlign = "left" | "center" | "right";
-export type Opacity = number;
-export type ArrowHeadRight = "";
-export type ArrowHeadLeft = "";

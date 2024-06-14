@@ -1,4 +1,4 @@
-import { Line } from "../utils/shapeTypes";
+import { Line } from "../types/shapeTypes";
 import { getFontDisplayProperties } from "./text";
 
 function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
@@ -6,7 +6,7 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
 
   const handleSize = 6;
 
-  if (type == "rect") {
+  if (type == "rect" || type == "image") {
     width = element.width;
     height = element.height;
     posX = element.posX;
@@ -47,7 +47,7 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
   ctx.save();
   //handle
   ctx.strokeStyle = "#rgb(56, 56, 174)";
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 0.3;
   ctx.strokeRect(posX - 3, posY - 3, width + 6, height + 6);
 
   ctx.fillStyle = "blue";

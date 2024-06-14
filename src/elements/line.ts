@@ -1,5 +1,5 @@
-import { Pan } from "../features/canvasSlice";
-import { Line } from "../utils/shapeTypes";
+import { Line } from "../types/shapeTypes";
+import { Pan } from "../types/stateTypes";
 
 function drawLine(ctx: CanvasRenderingContext2D, line: Line) {
   const { posX, posY, length } = line;
