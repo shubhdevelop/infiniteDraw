@@ -1,12 +1,12 @@
 import { Plus, Minus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  InitialState,
   increaseScale,
   resetScale,
   decreaseScale,
   resetPan,
 } from "../features/canvasSlice";
+import { InitialState } from "../types/stateTypes";
 
 function Zoom() {
   const dispatch = useDispatch();

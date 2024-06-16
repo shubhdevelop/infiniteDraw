@@ -1,4 +1,4 @@
-import { Ellipse } from "../utils/shapeTypes";
+import { Ellipse } from "../types/shapeTypes";
 
 function drawEllipse(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
   ctx.save();
