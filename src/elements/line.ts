@@ -2,10 +2,10 @@ import { Line } from "../types/shapeTypes";
 import { Pan } from "../types/stateTypes";
 
 function drawLine(ctx: CanvasRenderingContext2D, line: Line) {
-  const { posX, posY, length } = line;
+  const { posX, posY, length, rotation } = line;
 
   ctx.save();
-  //   ctx.rotate((Math.PI / 180) * rotation);
+  // ctx.rotate((Math.PI / 180) * rotation);
 
   //opacity
   ctx.globalAlpha = line.opacity / 100;
@@ -29,7 +29,7 @@ function drawLine(ctx: CanvasRenderingContext2D, line: Line) {
   //Line Width
   ctx.lineWidth = line.strokeWidth;
 
-  const angleInRadians = 180 * (Math.PI / 180);
+  const angleInRadians = rotation;
 
   // Calculate the end point (x, y)
   const endX = posX + length * Math.cos(angleInRadians);
@@ -51,9 +51,9 @@ function isPointOnLine(
   pan: Pan,
   shape: Line
 ) {
-  const { posX, posY, length } = shape;
+  const { posX, posY, length, rotation } = shape;
 
-  const angleInRadians = 180 * (Math.PI / 180);
+  const angleInRadians = rotation;
 
   // Calculate the end point (x, y)
   const endX = posX + length * Math.cos(angleInRadians);

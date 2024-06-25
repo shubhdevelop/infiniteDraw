@@ -86,7 +86,7 @@ function drawEllipse(ctx: CanvasRenderingContext2D, ellipse: Ellipse) {
     ctx.fillText(innerText, posX, posY);
   }
 
-  ctx.restore;
+  ctx.restore();
 }
 
 function isPointInsideRotatedEllipse(

@@ -26,17 +26,17 @@ const initialState: InitialState = {
   },
   globalProperties: {
     fillStyle: "solid",
-    strokeWidth: 1,
+    strokeWidth: 3,
     strokeStyle: "solid",
     strokeColor: "black",
-    backgroundColor: "transparent",
     edgeStyle: "sharp",
     fontSize: 24,
     fontFamily: "code",
     textAlign: "center",
-    opacity: 10,
+    opacity: 100,
     arrowHeadLeft: "arrow",
     arrowHeadRight: "arrow",
+    fillColor: "#fecaca",
   },
 };
 
@@ -143,10 +143,6 @@ export const canvasSlice = createSlice({
           ...payload,
         };
       }
-      // if (state.activeElement[0].type == "text") {
-      //   newCords.posX = payload.posX;
-      //   newCords.posY = payload.posY - state.activeElement[0].fontSize;
-      // }
 
       const newAllElement = state.allElements.map((element) => {
         return element.id == state.activeElement[0].id
@@ -188,6 +184,17 @@ export const canvasSlice = createSlice({
       state.allElements.push(newElement);
       state.activeElement[0] = newElement;
     },
+
+    changeGlobalProperties(
+      state,
+      { payload }: PayloadAction<AnyIndividualProperty>
+    ) {
+      let newGlobalPropertiesState = {
+        ...state.globalProperties,
+        ...payload,
+      };
+      state.globalProperties = newGlobalPropertiesState;
+    },
   },
 });
 
@@ -201,6 +208,7 @@ export const {
   toggleLock,
   resetPan,
   setPan,
+  resetCanvas,
   changeActiveElementProperties,
   addElement,
   setElementPosition,
@@ -210,6 +218,7 @@ export const {
   addNewElement,
   removeElement,
   duplicateElement,
+  changeGlobalProperties,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
@@ -226,7 +235,6 @@ export const dummyShapes: AllShape[] = [
     posY: 100,
     id: nanoid(),
     rotation: 0,
-    selected: true,
     edgeStyle: "rounded",
     fontFamily: "code",
     fontSize: 16,
@@ -247,7 +255,6 @@ export const dummyShapes: AllShape[] = [
     posY: 100,
     id: nanoid(),
     rotation: 0,
-    selected: true,
     edgeStyle: "sharp",
     fontFamily: "code",
     fontSize: 12,
@@ -268,7 +275,6 @@ export const dummyShapes: AllShape[] = [
     posY: 500,
     id: nanoid(),
     rotation: 0,
-    selected: true,
     edgeStyle: "sharp",
     fontFamily: "code",
     fontSize: 12,
@@ -287,7 +293,6 @@ export const dummyShapes: AllShape[] = [
     length: 100,
     id: nanoid(),
     rotation: 100,
-    selected: true,
     opacity: 100,
     middlePoint: 50,
   },

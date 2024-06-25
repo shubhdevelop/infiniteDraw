@@ -10,9 +10,15 @@ import {
   Laptop2,
 } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { resetCanvas } from "../features/canvasSlice";
 
 export default function OptionMenu() {
+  const dispatch = useDispatch();
   const [isCollapsed, setIsCollapsed] = useState(true);
+  function handleResetCanvas() {
+    dispatch(resetCanvas());
+  }
   return (
     <div
       id="zoom"
@@ -47,7 +53,10 @@ export default function OptionMenu() {
             <HelpCircle />
             <p>Help</p>
           </div>
-          <div className=" flex flex-row w-full h-full drop-shadow-sm gap-2 items-center hover:bg-blue-50 hover:cursor-pointer  round-md p-1">
+          <div
+            className=" flex flex-row w-full h-full drop-shadow-sm gap-2 items-center hover:bg-blue-50 hover:cursor-pointer  round-md p-1"
+            onClick={handleResetCanvas}
+          >
             <Trash2 />
             <p>Reset Canvas</p>
           </div>

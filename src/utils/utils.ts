@@ -12,3 +12,16 @@ export function getRealMouseCordinate(
 
   return [mouseX, mouseY];
 }
+
+export function calculateDistance(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+
+export function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
+  return -Math.atan2(y1 - y2, x2 - x1);
+}

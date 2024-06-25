@@ -1,15 +1,4 @@
-import {
-  FillStyle,
-  StrokeWidth,
-  StrokeStyle,
-  StrokeColor,
-  Background,
-  EdgeStyle,
-  FontSize,
-  FontFamily,
-  TextAlign,
-  Opacity,
-} from "./propertiesTypes";
+import { GlobalProperties } from "./propertiesTypes";
 import { AllShape } from "./shapeTypes";
 
 export type Active =
@@ -40,21 +29,6 @@ export type CanvasState = {
   pan: Pan;
   scale: number; //Percent
   locked: boolean;
-};
-
-export type GlobalProperties = {
-  fillStyle: FillStyle;
-  strokeWidth: StrokeWidth;
-  strokeStyle: StrokeStyle;
-  strokeColor: StrokeColor;
-  backgroundColor: Background;
-  edgeStyle: EdgeStyle;
-  fontSize: FontSize;
-  fontFamily: FontFamily;
-  textAlign: TextAlign;
-  opacity: Opacity;
-  arrowHeadLeft: "arrow";
-  arrowHeadRight: "arrow";
 };
 
 export type InitialState = {

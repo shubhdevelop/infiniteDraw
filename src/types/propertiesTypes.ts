@@ -26,5 +26,20 @@ export type FontSize = 12 | 16 | 20 | 24;
 export type FontFamily = "normal" | "paint" | "code";
 export type TextAlign = "left" | "center" | "right";
 export type Opacity = number;
-export type ArrowHeadRight = "";
-export type ArrowHeadLeft = "";
+export type ArrowHeadRight = "arrow";
+export type ArrowHeadLeft = "arrow";
+
+export type GlobalProperties = {
+  fillStyle: FillStyle;
+  strokeWidth: StrokeWidth;
+  strokeStyle: StrokeStyle;
+  strokeColor: StrokeColor;
+  edgeStyle: EdgeStyle;
+  fontSize: FontSize;
+  fontFamily: FontFamily;
+  textAlign: TextAlign;
+  opacity: Opacity;
+  arrowHeadLeft: ArrowHeadLeft;
+  arrowHeadRight: ArrowHeadRight;
+  fillColor: Background;
+};

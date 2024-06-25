@@ -27,7 +27,6 @@ export interface Shape {
   posY: number;
   strokeColor: string;
   strokeWidth: StrokeWidth;
-  selected: boolean;
   rotation: number;
   opacity: Opacity;
   strokeStyle: StrokeStyle;

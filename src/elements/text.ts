@@ -98,7 +98,6 @@ function addTextToCanvas(
       posY: mouseY,
       id: nanoid(),
       rotation: 100,
-      selected: true,
       fontFamily: "code",
       fontSize: 12,
       textAlign: "center",

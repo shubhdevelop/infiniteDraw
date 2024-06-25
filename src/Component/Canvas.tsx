@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clearCanvas } from "../utils/canvas";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addElement,
+  addNewElement,
   clearHoverElement,
   decreaseScale,
   dummyShapes,
@@ -22,11 +23,20 @@ import { addTextToCanvas, isMouseInsideText } from "../elements/text";
 import { isPointOnLine } from "../elements/line";
 import { isMouseInsideImage } from "../elements/image";
 import { InitialState } from "../types/stateTypes";
+import { shapeBuilder } from "../elements/shapeBuilder";
+
+type Cord = {
+  x: number;
+  y: number;
+};
 
 const Canvas = () => {
   const { scale, pan } = useSelector(
     (state: InitialState) => state.canvasState
   );
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [startCord, setStartCord] = useState<Cord | null>({ x: 0, y: 0 });
+  const [endCord, setEndCord] = useState<Cord | null>({ x: 0, y: 0 });
   const activeElement = useSelector(
     (state: InitialState) => state.activeElement
   );
@@ -35,9 +45,14 @@ const Canvas = () => {
   const allElements = useSelector((state: InitialState) => state.allElements);
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvas = canvasElement!.current;
+
+  //given alpha option improves performance
   const ctx = canvas?.getContext("2d");
   const activeTool = useSelector(
     (state: InitialState) => state.toolState.active
+  );
+  const globalProperties = useSelector(
+    (state: InitialState) => state.globalProperties
   );
 
   const handleClick = () => {
@@ -141,12 +156,6 @@ const Canvas = () => {
   }, []);
 
   //Draw Handlers on Active Elements
-  useEffect(() => {
-    if (activeElement.length > 0 && ctx) {
-      const element = activeElement[0];
-      drawHandler(ctx, element);
-    }
-  }, [activeElement, allElements]);
 
   useEffect(() => {
     if (hoverElement.length > 0 && activeTool == "pointer" && canvas) {
@@ -157,7 +166,7 @@ const Canvas = () => {
       canvas.style.cursor = "pointer";
     }
   }, [hoverElement]);
-
+  useEffect(() => {});
   //Scaling Panning Drawing and moving elements on the Canvas
   useEffect(() => {
     if (canvas && ctx) {
@@ -174,6 +183,8 @@ const Canvas = () => {
     canvas?.addEventListener("wheel", handlePanAndZoom);
     //Draws All the shapes
     if (ctx) {
+      console.log("before rendering", allElements);
+
       updateCanvas(ctx, allElements);
     }
 
@@ -190,6 +201,92 @@ const Canvas = () => {
     };
   }, [pan, scale, allElements, activeElement]);
 
+  //drawing shapes with mouse
+  useEffect(() => {
+    let isDrawableTool = ["rect", "ellipse", "line"].includes(activeTool);
+    function handleMouseDown(event: MouseEvent): void {
+      setIsMouseDown(true);
+      if (canvas && isDrawableTool) {
+        var mouseX =
+          (event.clientX - canvas.getBoundingClientRect().left - pan.x) /
+          (scale / 100);
+        var mouseY =
+          (event.clientY - canvas.getBoundingClientRect().top - pan.y) /
+          (scale / 100);
+        setStartCord({ x: mouseX, y: mouseY });
+      }
+    }
+
+    function handleMouseMove(event: MouseEvent): void {
+      if (isMouseDown && canvas && isDrawableTool) {
+        var mouseX =
+          (event.clientX - canvas.getBoundingClientRect().left - pan.x) /
+          (scale / 100);
+        var mouseY =
+          (event.clientY - canvas.getBoundingClientRect().top - pan.y) /
+          (scale / 100);
+
+        setEndCord({ x: mouseX, y: mouseY });
+      }
+    }
+
+    function handleMouseUp(event: MouseEvent): void {
+      if (startCord != null && endCord != null) {
+        let xComponent = endCord.x - startCord.x;
+        let yComponent = endCord.y - startCord.y;
+
+        if (isMouseDown && isDrawableTool) {
+          if (event.shiftKey) {
+            let min = Math.min(xComponent, yComponent);
+            const element = shapeBuilder(
+              startCord.x,
+              startCord.y,
+              endCord.x,
+              endCord.y,
+              min,
+              min,
+              activeTool,
+              globalProperties
+            );
+            dispatch(addNewElement(element));
+            setIsMouseDown(false);
+          } else {
+            const element = shapeBuilder(
+              startCord.x,
+              startCord.y,
+              endCord.x,
+              endCord.y,
+              xComponent,
+              yComponent,
+              activeTool,
+              globalProperties
+            );
+            dispatch(addNewElement(element));
+            setIsMouseDown(false);
+            setStartCord(null);
+            setEndCord(null);
+          }
+        }
+      }
+    }
+
+    canvas?.addEventListener("mousedown", handleMouseDown);
+    canvas?.addEventListener("mousemove", handleMouseMove);
+    canvas?.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      canvas?.removeEventListener("mousedown", handleMouseDown);
+      canvas?.removeEventListener("mousemove", handleMouseMove);
+      canvas?.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [activeTool, isMouseDown, startCord, endCord]);
+
+  useEffect(() => {
+    if (activeElement.length > 0 && ctx) {
+      const element = activeElement[0];
+      drawHandler(ctx, element);
+    }
+  }, [activeElement, allElements]);
   return (
     <>
       <canvas

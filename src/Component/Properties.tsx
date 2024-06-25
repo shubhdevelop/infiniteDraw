@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import {
   changeActiveElementProperties,
+  changeGlobalProperties,
   duplicateElement,
   removeElement,
 } from "../features/canvasSlice";
@@ -121,6 +122,7 @@ function StrokeColor() {
   const dispatch = useDispatch();
   function clickHandler(value: SColor) {
     dispatch(changeActiveElementProperties({ strokeColor: value }));
+    dispatch(changeGlobalProperties({ strokeColor: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -158,6 +160,7 @@ function BackgroundColor() {
   const dispatch = useDispatch();
   function clickHandler(value: Background) {
     dispatch(changeActiveElementProperties({ fillColor: value }));
+    dispatch(changeGlobalProperties({ fillColor: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -192,6 +195,7 @@ function FillStyle() {
   const dispatch = useDispatch();
   function clickHandler(value: FStyle) {
     dispatch(changeActiveElementProperties({ fillStyle: value }));
+    dispatch(changeGlobalProperties({ fillStyle: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -218,6 +222,7 @@ function StrokeWidth() {
   const dispatch = useDispatch();
   function clickHandler(value: SWidth) {
     dispatch(changeActiveElementProperties({ strokeWidth: value }));
+    dispatch(changeGlobalProperties({ strokeWidth: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -234,6 +239,7 @@ function StrokeStyle() {
   const dispatch = useDispatch();
   function clickHandler(value: SStyle) {
     dispatch(changeActiveElementProperties({ strokeStyle: value }));
+    dispatch(changeGlobalProperties({ strokeStyle: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -256,6 +262,7 @@ function EdgeStyle() {
   const dispatch = useDispatch();
   function clickHandler(value: EStyle) {
     dispatch(changeActiveElementProperties({ edgeStyle: value }));
+    dispatch(changeGlobalProperties({ edgeStyle: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -275,6 +282,7 @@ function FontSize() {
   const dispatch = useDispatch();
   function clickHandler(value: FSize) {
     dispatch(changeActiveElementProperties({ fontSize: value }));
+    dispatch(changeGlobalProperties({ fontSize: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -292,6 +300,7 @@ function FontFamily() {
   const dispatch = useDispatch();
   function clickHandler(value: FFamily) {
     dispatch(changeActiveElementProperties({ fontFamily: value }));
+    dispatch(changeGlobalProperties({ fontFamily: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -314,6 +323,7 @@ function TextAlign() {
   const dispatch = useDispatch();
   function clickHandler(value: TAlign) {
     dispatch(changeActiveElementProperties({ textAlign: value }));
+    dispatch(changeGlobalProperties({ textAlign: value }));
   }
   return (
     <div className="w-full px-2 mb-2">
@@ -336,6 +346,7 @@ function Opacity() {
   const dispatch = useDispatch();
   function clickHandler(value: OOpacity) {
     dispatch(changeActiveElementProperties({ opacity: value }));
+    dispatch(changeGlobalProperties({ opacity: value }));
   }
   return (
     <div className="w-full px-2 mb-2">

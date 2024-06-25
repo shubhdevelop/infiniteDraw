@@ -2,7 +2,7 @@ import { Line } from "../types/shapeTypes";
 import { getFontDisplayProperties } from "./text";
 
 function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
-  let { type, width, height, posX, posY } = element;
+  let { type, width, height, posX, posY, rotation } = element;
 
   const handleSize = 6;
 
@@ -30,22 +30,24 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
     posX = element.posX - width / 2;
     posY = element.posY - height / 2;
     ctx.restore();
+    rotation = 0;
   }
   if (type == "line") {
-    const { length }: Line = element;
-    const angleInRadians = 180 * (Math.PI / 180);
+    const { length, rotation }: Line = element;
+    const angleInRadians = rotation;
     // Calculate the end point (x, y)
     const endX = posX + length * Math.cos(angleInRadians);
     const endY = posY + length * Math.sin(angleInRadians);
 
-    width = length + 10;
+    width = length + 5;
     height = 10;
-    posX = Math.min(posX, endX) - 4;
-    posY = Math.min(posY, endY) - 6;
+    posX = Math.min(posX, endX) - 5;
+    posY = Math.min(posY, endY) - 12;
   }
 
   ctx.save();
   //handle
+  ctx.rotate(rotation);
   ctx.strokeStyle = "#rgb(56, 56, 174)";
   ctx.lineWidth = 0.3;
   ctx.strokeRect(posX - 3, posY - 3, width + 6, height + 6);
