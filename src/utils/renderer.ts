@@ -14,9 +14,6 @@ const updateCanvas = (ctx: CanvasRenderingContext2D, elements: AllShape[]) => {
       case "ellipse":
         drawEllipse(ctx, element);
         break;
-      case "diamond":
-        //drawDiamond(ctx,element)
-        break;
       case "line":
         drawLine(ctx, element);
         break;

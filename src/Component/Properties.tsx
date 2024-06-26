@@ -59,18 +59,12 @@ export default function Properties() {
 
   if (isAnElementInFocus) {
     const elementType = activeElement[0].type;
-    isPolygon =
-      elementType == "rect" ||
-      elementType == "ellipse" ||
-      elementType == "diamond";
+    isPolygon = elementType == "rect" || elementType == "ellipse";
     isRect = elementType == "rect";
     if (elementType == "arrow") {
       hasInnerText = Boolean(activeElement[0].innerText);
     }
     if (elementType == "rect") {
-      hasInnerText = Boolean(activeElement[0].innerText);
-    }
-    if (elementType == "diamond") {
       hasInnerText = Boolean(activeElement[0].innerText);
     }
     if (elementType == "ellipse") {

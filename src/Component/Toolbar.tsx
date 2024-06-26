@@ -1,7 +1,6 @@
 import {
   Minus,
   Square,
-  Diamond,
   Circle,
   Pen,
   ArrowRight,

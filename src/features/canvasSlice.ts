@@ -166,6 +166,7 @@ export const canvasSlice = createSlice({
     addNewElement(state, action) {
       if (action.payload != undefined) {
         state.allElements.push(action.payload);
+        state.activeElement[0] = action.payload;
         state.toolState.active = "pointer";
       }
     },
@@ -244,6 +245,7 @@ export const dummyShapes: AllShape[] = [
     fillStyle: "solid",
     opacity: 100,
     strokeStyle: "dashed",
+    isTextEditing: false,
   },
   {
     type: "rect",
@@ -264,6 +266,7 @@ export const dummyShapes: AllShape[] = [
     fillStyle: "solid",
     opacity: 100,
     strokeStyle: "dotted",
+    isTextEditing: false,
   },
   {
     type: "ellipse",
@@ -284,6 +287,7 @@ export const dummyShapes: AllShape[] = [
     fillStyle: "solid",
     opacity: 100,
     strokeStyle: "solid",
+    isTextEditing: false,
   },
   {
     type: "line",
@@ -297,5 +301,6 @@ export const dummyShapes: AllShape[] = [
     rotation: 100,
     opacity: 100,
     middlePoint: 50,
+    isTextEditing: false,
   },
 ];

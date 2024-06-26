@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { Active } from "../types/stateTypes";
 import { calculateAngle, calculateDistance, toPositive } from "../utils/utils";
 import { GlobalProperties } from "../types/propertiesTypes";
+import { AllShape, Ellipse, Line, Rect } from "../types/shapeTypes";
 
 export const shapeBuilder = (
   startX: number,
@@ -12,9 +13,9 @@ export const shapeBuilder = (
   yComponent: number,
   activeTool: Active,
   globalProperties: GlobalProperties
-) => {
+): AllShape | undefined => {
   if (activeTool == "line") {
-    let shape = {
+    let shape: Line = {
       type: "line",
       strokeColor: globalProperties.strokeColor,
       strokeWidth: globalProperties.strokeWidth,
@@ -26,6 +27,7 @@ export const shapeBuilder = (
       rotation: calculateAngle(startX, startY, endX, endY),
       opacity: 100,
       middlePoint: 50,
+      isTextEditing: false,
     };
 
     return shape;
@@ -69,7 +71,7 @@ export const shapeBuilder = (
 
   if (width && height) {
     if (activeTool == "rect") {
-      let shape = {
+      let shape: Rect = {
         type: activeTool,
         height: height,
         width: width,
@@ -88,11 +90,12 @@ export const shapeBuilder = (
         fillStyle: globalProperties.fillStyle,
         opacity: globalProperties.opacity,
         strokeStyle: globalProperties.strokeStyle,
+        isTextEditing: false,
       };
       return shape;
     }
     if (activeTool == "ellipse") {
-      let shape = {
+      let shape: Ellipse = {
         type: activeTool,
         radiusX: toPositive(width / 2),
         radiusY: toPositive(height / 2),
@@ -111,6 +114,7 @@ export const shapeBuilder = (
         fillStyle: globalProperties.fillStyle,
         opacity: globalProperties.opacity,
         strokeStyle: globalProperties.strokeStyle,
+        isTextEditing: false,
       };
       return shape;
     }

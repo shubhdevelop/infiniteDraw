@@ -30,6 +30,7 @@ export interface Shape {
   rotation: number;
   opacity: Opacity;
   strokeStyle: StrokeStyle;
+  isTextEditing: Boolean;
 }
 
 export interface Polygon extends Shape {
@@ -80,7 +81,7 @@ export interface Arrow extends Shape {
   fontFamily: FontFamily;
 }
 
-export interface Img extends Shape {
+export interface Img extends Omit<Shape, "isTextEditing"> {
   type: "image";
   src: ImageBitmap;
   width: number;
@@ -100,12 +101,4 @@ export interface Text extends Shape {
   innerText: string;
 }
 
-export type AllShape =
-  | Arrow
-  | Line
-  | Rect
-  | Ellipse
-  | Diamond
-  | Img
-  | Pen
-  | Text;
+export type AllShape = Arrow | Line | Rect | Ellipse | Img | Pen | Text;

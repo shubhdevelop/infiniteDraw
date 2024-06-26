@@ -25,7 +25,7 @@ import { isMouseInsideImage } from "../elements/image";
 import { InitialState } from "../types/stateTypes";
 import { shapeBuilder } from "../elements/shapeBuilder";
 import { isPositive, toNegative, toPositive } from "../utils/utils";
-import { ActivityIcon } from "lucide-react";
+import { AllShape } from "../types/shapeTypes";
 
 type Cord = {
   x: number;
@@ -37,13 +37,13 @@ const Canvas = () => {
     (state: InitialState) => state.canvasState
   );
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [startCord, setStartCord] = useState<Cord | null>({ x: 0, y: 0 });
-  const [endCord, setEndCord] = useState<Cord | null>({ x: 0, y: 0 });
+  const [startCord, setStartCord] = useState<Cord | null>(null);
+  const [endCord, setEndCord] = useState<Cord | null>(null);
+  const [previewElement, setPreviewElement] = useState<AllShape | null>(null);
   const activeElement = useSelector(
     (state: InitialState) => state.activeElement
   );
   const dispatch = useDispatch();
-  const hoverElement = useSelector((state: InitialState) => state.hoverElement);
   const allElements = useSelector((state: InitialState) => state.allElements);
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvas = canvasElement!.current;
@@ -159,18 +159,6 @@ const Canvas = () => {
     dispatch(setActiveTool("pointer"));
   }, []);
 
-  //Draw Handlers on Active Elements
-
-  useEffect(() => {
-    if (hoverElement.length > 0 && activeTool == "pointer" && canvas) {
-      canvas.style.cursor = "move";
-      console.log("this ran");
-    }
-    if (hoverElement.length == 0 && canvas && activeTool == "arrow") {
-      canvas.style.cursor = "pointer";
-    }
-  }, [hoverElement]);
-  useEffect(() => {});
   //Scaling Panning Drawing and moving elements on the Canvas
   useEffect(() => {
     if (canvas && ctx) {
@@ -205,7 +193,7 @@ const Canvas = () => {
     };
   }, [pan, scale, allElements, activeElement, activeTool]);
 
-  //drawing shapes with mouse
+  //drawing shapes using mouse
   useEffect(() => {
     let isDrawableTool = ["rect", "ellipse", "line"].includes(activeTool);
     function handleMouseDown(event: MouseEvent): void {
@@ -222,7 +210,7 @@ const Canvas = () => {
     }
 
     function handleMouseMove(event: MouseEvent): void {
-      if (isMouseDown && canvas && isDrawableTool) {
+      if (isMouseDown && canvas && isDrawableTool && ctx) {
         var mouseX =
           (event.clientX - canvas.getBoundingClientRect().left - pan.x) /
           (scale / 100);
@@ -231,6 +219,48 @@ const Canvas = () => {
           (scale / 100);
 
         setEndCord({ x: mouseX, y: mouseY });
+        if (startCord != null && endCord != null && isMouseDown) {
+          let xComponent = endCord.x - startCord.x; //width
+          let yComponent = endCord.y - startCord.y; //height
+
+          if (isMouseDown && isDrawableTool) {
+            if (event.shiftKey) {
+              // when Shift key is pressed Choose which component is bigger and retain the sign
+              let max = Math.max(
+                toPositive(xComponent),
+                toPositive(yComponent)
+              ); //we only care about the magnitude
+              let element = shapeBuilder(
+                startCord.x,
+                startCord.y,
+                endCord.x,
+                endCord.y,
+                isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
+                isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
+                activeTool,
+                globalProperties
+              );
+              if (element) {
+                setPreviewElement(element);
+              }
+            } else {
+              let element = shapeBuilder(
+                startCord.x,
+                startCord.y,
+                endCord.x,
+                endCord.y,
+                xComponent,
+                yComponent,
+                activeTool,
+                globalProperties
+              );
+              if (element) {
+                console.log(element);
+                setPreviewElement(element);
+              }
+            }
+          }
+        }
       }
     }
 
@@ -286,6 +316,20 @@ const Canvas = () => {
     };
   }, [activeTool, isMouseDown, startCord, endCord]);
 
+  //handle rendering of Preview while
+  useEffect(() => {
+    if (ctx && previewElement) {
+      clearCanvas(ctx, ctx.canvas.width, ctx.canvas.height);
+      updateCanvas(ctx, [...allElements, previewElement]);
+    }
+
+    return () => {
+      if (ctx && previewElement) {
+        clearCanvas(ctx, ctx.canvas.width, ctx.canvas.height);
+      }
+    };
+  }, [previewElement]);
+  //drawing handle on active element
   useEffect(() => {
     if (activeElement.length > 0 && ctx) {
       const element = activeElement[0];
