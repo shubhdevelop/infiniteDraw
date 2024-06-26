@@ -1,4 +1,3 @@
-import { Line } from "../types/shapeTypes";
 import { getFontDisplayProperties } from "./text";
 
 function drawHandler(ctx: CanvasRenderingContext2D, element: any) {

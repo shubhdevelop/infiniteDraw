@@ -55,7 +55,6 @@ export default function Toolbar() {
                   id: nanoid(),
                   rotation: 0,
                   src: res,
-                  selected: true,
                   opacity: 100,
                   strokeColor: "red",
                   strokeWidth: 3,
