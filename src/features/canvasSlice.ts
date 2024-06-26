@@ -164,8 +164,10 @@ export const canvasSlice = createSlice({
       }
     },
     addNewElement(state, action) {
-      state.allElements.push(action.payload);
-      state.toolState.active = "pointer";
+      if (action.payload != undefined) {
+        state.allElements.push(action.payload);
+        state.toolState.active = "pointer";
+      }
     },
     removeElement(state) {
       state.allElements = state.allElements.filter(

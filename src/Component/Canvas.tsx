@@ -24,6 +24,8 @@ import { isPointOnLine } from "../elements/line";
 import { isMouseInsideImage } from "../elements/image";
 import { InitialState } from "../types/stateTypes";
 import { shapeBuilder } from "../elements/shapeBuilder";
+import { isPositive, toNegative, toPositive } from "../utils/utils";
+import { ActivityIcon } from "lucide-react";
 
 type Cord = {
   x: number;
@@ -56,7 +58,9 @@ const Canvas = () => {
   );
 
   const handleClick = () => {
-    dispatch(setHoverElementActive());
+    if (activeTool == "pointer") {
+      dispatch(setHoverElementActive());
+    }
   };
 
   const handleMoveElement = (event: MouseEvent) => {
@@ -85,7 +89,7 @@ const Canvas = () => {
   };
 
   const handleHoverOverElement = (event: MouseEvent) => {
-    if (canvas && ctx) {
+    if (canvas && ctx && activeTool == "pointer") {
       // Check if mouse click is inside the square
       dispatch(clearHoverElement());
       allElements.forEach((shape) => {
@@ -124,7 +128,7 @@ const Canvas = () => {
   };
 
   const handleDoubleclick = (event: MouseEvent) => {
-    if (canvas) {
+    if (canvas && activeTool === "pointer") {
       addTextToCanvas(canvas, event, pan, scale, dispatch);
     }
   };
@@ -199,7 +203,7 @@ const Canvas = () => {
       canvas?.removeEventListener("wheel", handlePanAndZoom);
       canvas?.removeEventListener("keydown", handleShortcuts);
     };
-  }, [pan, scale, allElements, activeElement]);
+  }, [pan, scale, allElements, activeElement, activeTool]);
 
   //drawing shapes with mouse
   useEffect(() => {
@@ -231,27 +235,28 @@ const Canvas = () => {
     }
 
     function handleMouseUp(event: MouseEvent): void {
-      if (startCord != null && endCord != null) {
-        let xComponent = endCord.x - startCord.x;
-        let yComponent = endCord.y - startCord.y;
+      if (startCord != null && endCord != null && isMouseDown) {
+        let xComponent = endCord.x - startCord.x; //width
+        let yComponent = endCord.y - startCord.y; //height
 
         if (isMouseDown && isDrawableTool) {
+          let element;
           if (event.shiftKey) {
-            let min = Math.min(xComponent, yComponent);
-            const element = shapeBuilder(
+            // when Shift key is pressed Choose which component is bigger and retain the sign
+
+            let max = Math.max(toPositive(xComponent), toPositive(yComponent)); //we only care about the magnitude
+            element = shapeBuilder(
               startCord.x,
               startCord.y,
               endCord.x,
               endCord.y,
-              min,
-              min,
+              isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
+              isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
               activeTool,
               globalProperties
             );
-            dispatch(addNewElement(element));
-            setIsMouseDown(false);
           } else {
-            const element = shapeBuilder(
+            element = shapeBuilder(
               startCord.x,
               startCord.y,
               endCord.x,
@@ -261,11 +266,11 @@ const Canvas = () => {
               activeTool,
               globalProperties
             );
-            dispatch(addNewElement(element));
-            setIsMouseDown(false);
-            setStartCord(null);
-            setEndCord(null);
           }
+          dispatch(addNewElement(element));
+          setIsMouseDown(false);
+          setStartCord(null);
+          setEndCord(null);
         }
       }
     }

@@ -32,6 +32,8 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
     rotation = 0;
   }
 
+  if (type == "line") return;
+
   ctx.save();
   //handle
   ctx.rotate(rotation);

@@ -5,8 +5,6 @@ function drawLine(ctx: CanvasRenderingContext2D, line: Line) {
   const { posX, posY, length, rotation } = line;
 
   ctx.save();
-  // ctx.rotate((Math.PI / 180) * rotation);
-
   //opacity
   ctx.globalAlpha = line.opacity / 100;
 

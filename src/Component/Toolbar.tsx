@@ -153,20 +153,20 @@ export default function Toolbar() {
             <Square width={20} height={20} />
           )}
         </div>
-        <div
+        {/* <div
           onClick={() => {
             handleClick("diamond");
           }}
           className={`md:w-10 w-7 h-10 p-2 ${
             active == "diamond" ? "bg-blue-100" : ""
           } hover:bg-blue-100 hover:cursor-pointer rounded-lg flex justify-center items-center`}
-        >
-          {active == "diamond" ? (
+        > */}
+        {/* {active == "diamond" ? (
             <Diamond width={20} height={20} fill={"blue"} fillOpacity={0.2} />
           ) : (
             <Diamond width={20} height={20} />
           )}
-        </div>
+        </div> */}
         <div
           onClick={() => {
             handleClick("ellipse");

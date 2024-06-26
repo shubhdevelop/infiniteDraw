@@ -33,3 +33,19 @@ export function toPositive(num: number) {
     return num;
   }
 }
+
+export function toNegative(num: number) {
+  if (num >= 0) {
+    return -num;
+  } else {
+    return num;
+  }
+}
+
+export function isPositive(num: number) {
+  return num >= 0;
+}
+
+export function isNegative(num: number) {
+  return !isPositive(num);
+}
