@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { Active } from "../types/stateTypes";
-import { calculateAngle, calculateDistance } from "../utils/utils";
+import { calculateAngle, calculateDistance, toPositive } from "../utils/utils";
 import { GlobalProperties } from "../types/propertiesTypes";
 
 export const shapeBuilder = (
@@ -8,57 +8,11 @@ export const shapeBuilder = (
   startY: number,
   endX: number,
   endY: number,
-  width: number,
-  height: number,
+  xComponent: number,
+  yComponent: number,
   activeTool: Active,
   globalProperties: GlobalProperties
 ) => {
-  if (activeTool == "rect") {
-    let shape = {
-      type: activeTool,
-      height: height,
-      width: width,
-      fillColor: globalProperties.fillColor,
-      strokeColor: globalProperties.strokeColor,
-      strokeWidth: globalProperties.strokeWidth,
-      innerText: "",
-      posX: startX,
-      posY: startY,
-      id: nanoid(),
-      rotation: 0,
-      edgeStyle: globalProperties.edgeStyle,
-      fontFamily: globalProperties.fontFamily,
-      fontSize: globalProperties.fontSize,
-      textAlign: globalProperties.textAlign,
-      fillStyle: globalProperties.fillStyle,
-      opacity: globalProperties.opacity,
-      strokeStyle: globalProperties.strokeStyle,
-    };
-    return shape;
-  }
-  if (activeTool == "ellipse") {
-    let shape = {
-      type: activeTool,
-      radiusX: width / 2,
-      radiusY: height / 2,
-      fillColor: globalProperties.fillColor,
-      strokeColor: globalProperties.strokeColor,
-      strokeWidth: globalProperties.strokeWidth,
-      innerText: "",
-      posX: startX + width / 2,
-      posY: startY + height / 2,
-      id: nanoid(),
-      rotation: 0,
-      edgeStyle: globalProperties.edgeStyle,
-      fontFamily: globalProperties.fontFamily,
-      fontSize: globalProperties.fontSize,
-      textAlign: globalProperties.textAlign,
-      fillStyle: globalProperties.fillStyle,
-      opacity: globalProperties.opacity,
-      strokeStyle: globalProperties.strokeStyle,
-    };
-    return shape;
-  }
   if (activeTool == "line") {
     let shape = {
       type: "line",
@@ -73,8 +27,92 @@ export const shapeBuilder = (
       opacity: 100,
       middlePoint: 50,
     };
-    alert(shape.rotation);
 
     return shape;
+  }
+
+  let width, height;
+  console.log("xComponent :", xComponent, "yComponent:", yComponent);
+
+  //Decide quadrant in which endPos exist starting being the origin
+  if (xComponent >= 0 && yComponent >= 0) {
+    width = xComponent;
+    height = yComponent;
+    startX = startX;
+    startY = startY;
+    endX = endX;
+    endY = endY;
+  } else if (xComponent <= 0 && yComponent <= 0) {
+    let tempStartX = startX;
+    let tempStartY = startY;
+    width = -xComponent;
+    height = -yComponent;
+    startX = endX;
+    startY = endY;
+    endX = tempStartX;
+    endY = tempStartY;
+  } else if (xComponent >= 0 && yComponent <= 0) {
+    width = xComponent;
+    height = -yComponent;
+    startX = startX;
+    startY = startY + yComponent;
+    endX = endX;
+    endY = endY + yComponent;
+  } else if (xComponent <= 0 && yComponent >= 0) {
+    width = -xComponent;
+    height = yComponent;
+    startX = startX + xComponent;
+    startY = startY;
+    endX = endX - xComponent;
+    endY = endY;
+  }
+
+  if (width && height) {
+    if (activeTool == "rect") {
+      let shape = {
+        type: activeTool,
+        height: height,
+        width: width,
+        fillColor: globalProperties.fillColor,
+        strokeColor: globalProperties.strokeColor,
+        strokeWidth: globalProperties.strokeWidth,
+        innerText: "",
+        posX: startX,
+        posY: startY,
+        id: nanoid(),
+        rotation: 0,
+        edgeStyle: globalProperties.edgeStyle,
+        fontFamily: globalProperties.fontFamily,
+        fontSize: globalProperties.fontSize,
+        textAlign: globalProperties.textAlign,
+        fillStyle: globalProperties.fillStyle,
+        opacity: globalProperties.opacity,
+        strokeStyle: globalProperties.strokeStyle,
+      };
+      return shape;
+    }
+    if (activeTool == "ellipse") {
+      let shape = {
+        type: activeTool,
+        radiusX: toPositive(width / 2),
+        radiusY: toPositive(height / 2),
+        fillColor: globalProperties.fillColor,
+        strokeColor: globalProperties.strokeColor,
+        strokeWidth: globalProperties.strokeWidth,
+        innerText: "",
+        posX: startX + width / 2,
+        posY: startY + height / 2,
+        id: nanoid(),
+        rotation: 0,
+        edgeStyle: globalProperties.edgeStyle,
+        fontFamily: globalProperties.fontFamily,
+        fontSize: globalProperties.fontSize,
+        textAlign: globalProperties.textAlign,
+        fillStyle: globalProperties.fillStyle,
+        opacity: globalProperties.opacity,
+        strokeStyle: globalProperties.strokeStyle,
+      };
+      return shape;
+    }
   }
 };

@@ -32,18 +32,6 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
     ctx.restore();
     rotation = 0;
   }
-  if (type == "line") {
-    const { length, rotation }: Line = element;
-    const angleInRadians = rotation;
-    // Calculate the end point (x, y)
-    const endX = posX + length * Math.cos(angleInRadians);
-    const endY = posY + length * Math.sin(angleInRadians);
-
-    width = length + 5;
-    height = 10;
-    posX = Math.min(posX, endX) - 5;
-    posY = Math.min(posY, endY) - 12;
-  }
 
   ctx.save();
   //handle

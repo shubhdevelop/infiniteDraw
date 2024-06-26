@@ -25,3 +25,11 @@ export function calculateDistance(
 export function calculateAngle(x1: number, y1: number, x2: number, y2: number) {
   return -Math.atan2(y1 - y2, x2 - x1);
 }
+
+export function toPositive(num: number) {
+  if (num <= 0) {
+    return -num;
+  } else {
+    return num;
+  }
+}
