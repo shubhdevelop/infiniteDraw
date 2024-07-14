@@ -99,7 +99,7 @@ export const canvasSlice = createSlice({
     },
     changeActiveElementProperties(
       state,
-      { payload }: PayloadAction<AnyIndividualProperty>
+      { payload }: PayloadAction<AnyIndividualProperty>,
     ) {
       const newAllElement = state.allElements.map((element) => {
         return element.id == state.activeElement[0].id
@@ -114,7 +114,7 @@ export const canvasSlice = createSlice({
     },
     setElementPosition(
       state,
-      { payload }: PayloadAction<{ posX: number; posY: number }>
+      { payload }: PayloadAction<{ posX: number; posY: number }>,
     ) {
       let newCords: {
         posX: number;
@@ -157,10 +157,19 @@ export const canvasSlice = createSlice({
       state.allElements = newAllElement;
     },
     setHoverElementActive(state) {
-      if (state.hoverElement.length > 0) {
-        state.activeElement = state.hoverElement;
-      } else {
-        state.activeElement = [];
+      if (state.toolState.active == "pointer") {
+        if (state.hoverElement.length > 0) {
+          state.activeElement = state.hoverElement;
+        } else {
+          state.activeElement = [];
+        }
+      } else if (state.toolState.active == "eraser") {
+        if (state.hoverElement.length > 0) {
+          state.activeElement = state.hoverElement;
+        } else {
+          state.activeElement = [];
+        }
+        removeElement();
       }
     },
     addNewElement(state, action) {
@@ -172,7 +181,7 @@ export const canvasSlice = createSlice({
     },
     removeElement(state) {
       state.allElements = state.allElements.filter(
-        (element) => element.id !== state.activeElement[0].id
+        (element) => element.id !== state.activeElement[0].id,
       );
       state.activeElement = [];
     },
@@ -190,7 +199,7 @@ export const canvasSlice = createSlice({
 
     changeGlobalProperties(
       state,
-      { payload }: PayloadAction<AnyIndividualProperty>
+      { payload }: PayloadAction<AnyIndividualProperty>,
     ) {
       let newGlobalPropertiesState = {
         ...state.globalProperties,

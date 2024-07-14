@@ -34,14 +34,14 @@ type Cord = {
 
 const Canvas = () => {
   const { scale, pan } = useSelector(
-    (state: InitialState) => state.canvasState
+    (state: InitialState) => state.canvasState,
   );
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [startCord, setStartCord] = useState<Cord | null>(null);
   const [endCord, setEndCord] = useState<Cord | null>(null);
   const [previewElement, setPreviewElement] = useState<AllShape | null>(null);
   const activeElement = useSelector(
-    (state: InitialState) => state.activeElement
+    (state: InitialState) => state.activeElement,
   );
   const dispatch = useDispatch();
   const allElements = useSelector((state: InitialState) => state.allElements);
@@ -51,15 +51,18 @@ const Canvas = () => {
   //given alpha option improves performance
   const ctx = canvas?.getContext("2d");
   const activeTool = useSelector(
-    (state: InitialState) => state.toolState.active
+    (state: InitialState) => state.toolState.active,
   );
   const globalProperties = useSelector(
-    (state: InitialState) => state.globalProperties
+    (state: InitialState) => state.globalProperties,
   );
 
   const handleClick = () => {
     if (activeTool == "pointer") {
       dispatch(setHoverElementActive());
+    } else if (activeTool == "eraser") {
+      dispatch(setHoverElementActive());
+      dispatch(removeElement());
     }
   };
 
@@ -83,13 +86,13 @@ const Canvas = () => {
         setElementPosition({
           posX: mouseX,
           posY: mouseY,
-        })
+        }),
       );
     }
   };
 
   const handleHoverOverElement = (event: MouseEvent) => {
-    if (canvas && ctx && activeTool == "pointer") {
+    if (canvas && ctx && (activeTool == "pointer" || activeTool == "eraser")) {
       // Check if mouse click is inside the square
       dispatch(clearHoverElement());
       allElements.forEach((shape) => {
@@ -228,7 +231,7 @@ const Canvas = () => {
               // when Shift key is pressed Choose which component is bigger and retain the sign
               let max = Math.max(
                 toPositive(xComponent),
-                toPositive(yComponent)
+                toPositive(yComponent),
               ); //we only care about the magnitude
               let element = shapeBuilder(
                 startCord.x,
@@ -238,7 +241,7 @@ const Canvas = () => {
                 isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
                 isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
                 activeTool,
-                globalProperties
+                globalProperties,
               );
               if (element) {
                 setPreviewElement(element);
@@ -252,7 +255,7 @@ const Canvas = () => {
                 xComponent,
                 yComponent,
                 activeTool,
-                globalProperties
+                globalProperties,
               );
               if (element) {
                 console.log(element);
@@ -283,7 +286,7 @@ const Canvas = () => {
               isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
               isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
               activeTool,
-              globalProperties
+              globalProperties,
             );
           } else {
             element = shapeBuilder(
@@ -294,7 +297,7 @@ const Canvas = () => {
               xComponent,
               yComponent,
               activeTool,
-              globalProperties
+              globalProperties,
             );
           }
           dispatch(addNewElement(element));
