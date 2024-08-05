@@ -45,11 +45,11 @@ export const canvasSlice = createSlice({
   initialState,
   reducers: {
     increaseScale: ({ canvasState }: InitialState) => {
-      if (canvasState.scale <= 600 - SCALE_FACTOR) {
+      if (canvasState.scale <= 2000 - SCALE_FACTOR) {
         const scale = canvasState.scale + SCALE_FACTOR;
         canvasState.scale = scale;
       } else {
-        canvasState.scale = 600;
+        canvasState.scale = 2000;
       }
     },
     decreaseScale: ({ canvasState }: InitialState) => {

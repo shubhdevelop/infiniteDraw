@@ -5,7 +5,7 @@ export default function UndoRedo() {
     <div
       id="zoom"
       style={{
-        left: "220px",
+        left: "230px",
         top: "93%",
         transform: "translate(-50%, 0)",
       }}
