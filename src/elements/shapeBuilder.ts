@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
-import { Active } from "../types/stateTypes";
+import { Active,  } from "../types/stateTypes";
 import { calculateAngle, calculateDistance, toPositive } from "../utils/utils";
 import { GlobalProperties } from "../types/propertiesTypes";
-import { AllShape, Ellipse, Line, Rect } from "../types/shapeTypes";
+import { AllShape, Ellipse, Line, Pen, Rect } from "../types/shapeTypes";
 
 export const shapeBuilder = (
   startX: number,
@@ -33,8 +33,25 @@ export const shapeBuilder = (
     return shape;
   }
 
+  if (activeTool == "pen") {
+    let shape: Pen = {
+      type: "pen",
+      points:[{x:startX,y:startY}],
+      strokeColor: globalProperties.strokeColor,
+      strokeWidth: globalProperties.strokeWidth,
+      strokeStyle: globalProperties.strokeStyle,
+      posX: startX,
+      posY: startY,
+      id: nanoid(),
+      rotation: calculateAngle(startX, startY, endX, endY),
+      opacity: 100,
+      isTextEditing: false,
+    };
+
+    return shape;
+  }
+
   let width, height;
-  console.log("xComponent :", xComponent, "yComponent:", yComponent);
 
   //Decide quadrant in which endPos exist starting being the origin
   if (xComponent >= 0 && yComponent >= 0) {

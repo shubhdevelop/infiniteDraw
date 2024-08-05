@@ -1,6 +1,7 @@
 import { drawEllipse } from "../elements/ellipse";
 import { drawImage } from "../elements/image";
 import { drawLine } from "../elements/line";
+import { drawPath } from "../elements/path";
 import { drawRect } from "../elements/rect";
 import { drawText } from "../elements/text";
 import { AllShape } from "../types/shapeTypes";
@@ -27,7 +28,7 @@ const updateCanvas = (ctx: CanvasRenderingContext2D, elements: AllShape[]) => {
         drawText(ctx, element);
         break;
       case "pen":
-        //drawPen(etx, element)
+        drawPath(ctx, element);
         break;
       default:
         break;

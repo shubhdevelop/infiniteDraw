@@ -28,6 +28,8 @@ export type TextAlign = "left" | "center" | "right";
 export type Opacity = number;
 export type ArrowHeadRight = "arrow";
 export type ArrowHeadLeft = "arrow";
+export type arrangeLayerAction = "toBack" | 'toFront' | "forward" | "backward";
+
 
 export type GlobalProperties = {
   fillStyle: FillStyle;

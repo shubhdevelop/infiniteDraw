@@ -24,8 +24,9 @@ import { isPointOnLine } from "../elements/line";
 import { isMouseInsideImage } from "../elements/image";
 import { InitialState } from "../types/stateTypes";
 import { shapeBuilder } from "../elements/shapeBuilder";
-import { isPositive, toNegative, toPositive } from "../utils/utils";
-import { AllShape } from "../types/shapeTypes";
+import { calculateAngle, isPositive, toNegative, toPositive } from "../utils/utils";
+import { AllShape, Pen } from "../types/shapeTypes";
+import { nanoid } from "nanoid";
 
 type Cord = {
   x: number;
@@ -34,27 +35,32 @@ type Cord = {
 
 const Canvas = () => {
   const { scale, pan } = useSelector(
-    (state: InitialState) => state.canvasState,
+    (state: InitialState) => state.canvasState
   );
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [startCord, setStartCord] = useState<Cord | null>(null);
   const [endCord, setEndCord] = useState<Cord | null>(null);
   const [previewElement, setPreviewElement] = useState<AllShape | null>(null);
+  const [pathElement , setPathElement] = useState<Pen | null>(null);
   const activeElement = useSelector(
-    (state: InitialState) => state.activeElement,
+    (state: InitialState) => state.activeElement
   );
   const dispatch = useDispatch();
   const allElements = useSelector((state: InitialState) => state.allElements);
   const canvasElement = useRef<HTMLCanvasElement>(null);
   const canvas = canvasElement!.current;
+  let ContextConfig: CanvasRenderingContext2DSettings = {
+    colorSpace:"display-p3",
+    alpha:true
 
+  }
   //given alpha option improves performance
-  const ctx = canvas?.getContext("2d");
+  const ctx = canvas?.getContext("2d", ContextConfig);
   const activeTool = useSelector(
-    (state: InitialState) => state.toolState.active,
+    (state: InitialState) => state.toolState.active
   );
   const globalProperties = useSelector(
-    (state: InitialState) => state.globalProperties,
+    (state: InitialState) => state.globalProperties
   );
 
   const handleClick = () => {
@@ -86,7 +92,7 @@ const Canvas = () => {
         setElementPosition({
           posX: mouseX,
           posY: mouseY,
-        }),
+        })
       );
     }
   };
@@ -198,7 +204,7 @@ const Canvas = () => {
 
   //drawing shapes using mouse
   useEffect(() => {
-    let isDrawableTool = ["rect", "ellipse", "line"].includes(activeTool);
+    let isDrawableTool = ["rect", "ellipse", "line","pen"].includes(activeTool);
     function handleMouseDown(event: MouseEvent): void {
       setIsMouseDown(true);
       if (canvas && isDrawableTool) {
@@ -227,11 +233,14 @@ const Canvas = () => {
           let yComponent = endCord.y - startCord.y; //height
 
           if (isMouseDown && isDrawableTool) {
+
+
+
             if (event.shiftKey) {
               // when Shift key is pressed Choose which component is bigger and retain the sign
               let max = Math.max(
                 toPositive(xComponent),
-                toPositive(yComponent),
+                toPositive(yComponent)
               ); //we only care about the magnitude
               let element = shapeBuilder(
                 startCord.x,
@@ -241,11 +250,35 @@ const Canvas = () => {
                 isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
                 isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
                 activeTool,
-                globalProperties,
+                globalProperties
               );
               if (element) {
                 setPreviewElement(element);
               }
+            }
+            else if(activeTool == 'pen'){
+                setPathElement( prev =>{
+                    if(pathElement && prev){
+                        return {...prev,points:[...prev.points,{x:mouseX,y:mouseY}]}
+                    }else{
+                       return {
+                            type: "pen",
+                            points:[{x:startCord.x, y: startCord.y}],
+                            strokeColor: globalProperties.strokeColor,
+                            strokeWidth: globalProperties.strokeWidth,
+                            strokeStyle: globalProperties.strokeStyle,
+                            posX: mouseX,
+                            posY: mouseY,
+                            id: nanoid(),
+                            rotation: calculateAngle(startCord.x, startCord.y, endCord.x, endCord.y),
+                            opacity: 100,
+                            isTextEditing: false,
+                          }
+                    }
+                })
+                if (pathElement) {
+                    setPreviewElement(pathElement);
+                  }
             } else {
               let element = shapeBuilder(
                 startCord.x,
@@ -255,10 +288,9 @@ const Canvas = () => {
                 xComponent,
                 yComponent,
                 activeTool,
-                globalProperties,
+                globalProperties
               );
               if (element) {
-                console.log(element);
                 setPreviewElement(element);
               }
             }
@@ -286,7 +318,7 @@ const Canvas = () => {
               isPositive(xComponent) ? toPositive(max) : toNegative(max), //xComponent
               isPositive(yComponent) ? toPositive(max) : toNegative(max), //yComponent
               activeTool,
-              globalProperties,
+              globalProperties
             );
           } else {
             element = shapeBuilder(
@@ -297,10 +329,17 @@ const Canvas = () => {
               xComponent,
               yComponent,
               activeTool,
-              globalProperties,
+              globalProperties
             );
           }
-          dispatch(addNewElement(element));
+          if(activeTool == "pen"){
+            dispatch(addNewElement(pathElement));
+            setPathElement(null);
+
+          }else{
+
+              dispatch(addNewElement(element));
+          }
           setIsMouseDown(false);
           setStartCord(null);
           setEndCord(null);
@@ -317,7 +356,7 @@ const Canvas = () => {
       canvas?.removeEventListener("mousemove", handleMouseMove);
       canvas?.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [activeTool, isMouseDown, startCord, endCord]);
+  }, [activeTool, isMouseDown, startCord, endCord, pathElement]);
 
   //handle rendering of Preview while
   useEffect(() => {
@@ -345,6 +384,8 @@ const Canvas = () => {
         width={window.innerWidth}
         height={window.innerHeight}
         ref={canvasElement}
+        style={{backgroundColor:"#F5EFE6",
+        }}
       />
     </>
   );

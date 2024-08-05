@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
-import { AnyIndividualProperty } from "../types/propertiesTypes";
+import { AnyIndividualProperty, arrangeLayerAction } from "../types/propertiesTypes";
 import { AllShape } from "../types/shapeTypes";
 import { InitialState, Pan } from "../types/stateTypes";
 import { SCALE_FACTOR } from "../utils/constant";
@@ -207,7 +207,64 @@ export const canvasSlice = createSlice({
       };
       state.globalProperties = newGlobalPropertiesState;
     },
+    arrangeLayer(state, action: PayloadAction<arrangeLayerAction> ){
+
+       const indexActiveElement = state.allElements.findIndex(el=>el.id === state.activeElement[0].id)
+       switch (action.payload) {
+        case "backward":
+        if(indexActiveElement === 0){
+            return ;
+        }else{
+            const newState = state.allElements;
+            const temp = newState[indexActiveElement];
+            newState[indexActiveElement] = newState[indexActiveElement - 1]
+            newState[indexActiveElement - 1] = temp;
+            state.allElements = newState;
+                    }
+            break;
+        case "toBack":
+        if(indexActiveElement === 0){
+                return;
+            }else{
+                const temp = state.allElements[indexActiveElement];
+                const newState = state.allElements.filter(function(item) {
+                    return item.id !== temp.id;
+                })
+                state.allElements = [temp,...newState];
+            }
+
+            break;
+        case "forward":
+            if(indexActiveElement === state.allElements.length-1){
+                return;
+            }else{
+                const newState = state.allElements;
+                const temp = newState[indexActiveElement];
+                newState[indexActiveElement] = newState[indexActiveElement + 1]
+                newState[indexActiveElement + 1] = temp;
+            state.allElements = newState;
+            }
+
+            break;
+        case "toFront":
+            if(indexActiveElement === state.allElements.length-1){
+                return;
+            }else{
+                const temp = state.allElements[indexActiveElement];
+                const newState = state.allElements.filter(function(item) {
+                    return item.id !== temp.id;
+                })
+                state.allElements = [...newState, temp];
+            }
+
+            break;
+
+        default:
+            break;
+       }
+    }
   },
+
 });
 
 export const {
@@ -231,6 +288,7 @@ export const {
   removeElement,
   duplicateElement,
   changeGlobalProperties,
+  arrangeLayer,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
@@ -311,5 +369,18 @@ export const dummyShapes: AllShape[] = [
     opacity: 100,
     middlePoint: 50,
     isTextEditing: false,
+  },
+  {
+    type: "pen",
+    strokeColor: "blue",
+    strokeWidth:3,
+    strokeStyle: "solid",
+    posX: 350,
+    posY: 350,
+    id: nanoid(),
+    rotation: 100,
+    opacity: 100,
+    isTextEditing: false,
+    points:[{x:0,y:0},{x:10,y:5},{x:20,y:20},{x:40,y:30},{x:80,y:80},{x:90,y:70},{x:60,y:60}]
   },
 ];

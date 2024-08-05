@@ -88,16 +88,14 @@ function drawRect(ctx: CanvasRenderingContext2D, rect: Rect) {
 }
 
 function isMouseInsideRect(
-  event: MouseEvent,
+  coord: { x: number; y: number },
   canvas: HTMLCanvasElement,
   { posX, posY, width, height }: Rect,
   scale: number,
   pan: { x: number; y: number }
 ): boolean {
-  var mouseX =
-    (event.clientX - canvas.getBoundingClientRect().left - pan.x) / scale;
-  var mouseY =
-    (event.clientY - canvas.getBoundingClientRect().top - pan.y) / scale;
+  var mouseX = (coord.x - canvas.getBoundingClientRect().left - pan.x) / scale;
+  var mouseY = (coord.y - canvas.getBoundingClientRect().top - pan.y) / scale;
 
   // Check if mouse coordinates are inside rectangle bounds
   const isInside =

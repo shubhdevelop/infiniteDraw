@@ -37,6 +37,7 @@ function drawLine(ctx: CanvasRenderingContext2D, line: Line) {
   ctx.moveTo(posX, posY); // Move the pen to (30, 50)
   ctx.lineTo(endX, endY); // Draw a line to (150, 100)
   ctx.stroke(); // Render the path
+  ctx.closePath();
 
   // Add text in the middle
   ctx.restore();

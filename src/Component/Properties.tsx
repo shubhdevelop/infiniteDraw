@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import {
+    arrangeLayer,
   changeActiveElementProperties,
   changeGlobalProperties,
   duplicateElement,
@@ -38,6 +39,7 @@ import {
   FontFamily as FFamily,
   TextAlign as TAlign,
   Opacity as OOpacity,
+  arrangeLayerAction,
 } from "../types/propertiesTypes";
 import { InitialState } from "../types/stateTypes";
 
@@ -380,20 +382,24 @@ function ArrowHead() {
   );
 }
 function Layers() {
+  const dispatch = useDispatch();
+function handleArrangeLayer(type:arrangeLayerAction) {
+    dispatch(arrangeLayer(type))
+}
   return (
     <div className="w-full px-2 mb-2">
       <p className="py-1">Layers</p>
       <Options>
-        <Option>
+        <Option clickHandler={()=>handleArrangeLayer("toBack")}>
           <ArrowDownToLine width={20} height={20} color="black" />
         </Option>
-        <Option>
+        <Option clickHandler={()=>handleArrangeLayer("backward")}>
           <ArrowDown width={20} height={20} color="black" />
         </Option>
-        <Option>
+        <Option clickHandler={()=>handleArrangeLayer("forward")}>
           <ArrowUp width={20} height={20} color="black" />
         </Option>
-        <Option>
+        <Option clickHandler={()=>handleArrangeLayer("toFront")}>
           <ArrowUpToLine width={20} height={20} color="black" />
         </Option>
       </Options>
