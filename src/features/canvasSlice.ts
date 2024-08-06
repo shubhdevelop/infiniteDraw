@@ -370,17 +370,4 @@ export const dummyShapes: AllShape[] = [
     middlePoint: 50,
     isTextEditing: false,
   },
-  {
-    type: "pen",
-    strokeColor: "blue",
-    strokeWidth:3,
-    strokeStyle: "solid",
-    posX: 350,
-    posY: 350,
-    id: nanoid(),
-    rotation: 100,
-    opacity: 100,
-    isTextEditing: false,
-    points:[{x:0,y:0},{x:10,y:5},{x:20,y:20},{x:40,y:30},{x:80,y:80},{x:90,y:70},{x:60,y:60}]
-  },
 ];
