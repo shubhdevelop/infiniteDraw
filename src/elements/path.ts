@@ -1,4 +1,5 @@
 import { Pen } from "../types/shapeTypes";
+import {Pan} from "../types/stateTypes";
 
 function drawPath(ctx: CanvasRenderingContext2D, pen:Pen) {
   const { points } = pen;
@@ -50,4 +51,31 @@ ctx.quadraticCurveTo(
   ctx.restore();
 }
 
-export { drawPath};
+
+function calculateDistance(x1:number, y1:number, x2:number, y2:number) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+function isPointOnPath(event:MouseEvent, canvas:HTMLCanvasElement,scale: number, pan:Pan,shape:Pen){
+
+  const {  points, strokeWidth    } = shape;
+let tolerance = 10 * strokeWidth / 2; //in pixel;
+
+  var mouseX =
+    (event.clientX - canvas.getBoundingClientRect().left - pan.x) / scale;
+  var mouseY =
+    (event.clientY - canvas.getBoundingClientRect().top - pan.y) / scale;
+
+            console.log('this ran but waiting for confirmation!')
+ for (let i = 0; i < points.length; i++) {
+        let point = points[i];
+        let distance = calculateDistance(mouseX, mouseY, point.x, point.y);
+
+        if (distance <= tolerance) {
+            console.log('this ran when condition was true');
+            return true; // The mouse is near this point on the path
+        }
+    }
+    return false; 
+}
+export { drawPath, isPointOnPath};

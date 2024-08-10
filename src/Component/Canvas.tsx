@@ -25,6 +25,7 @@ import { isMouseInsideImage } from "../elements/image";
 import { InitialState } from "../types/stateTypes";
 import { shapeBuilder } from "../elements/shapeBuilder";
 import { calculateAngle, isPositive, toNegative, toPositive } from "../utils/utils";
+import {isPointOnPath} from "../elements/path.ts";
 import { AllShape, Pen } from "../types/shapeTypes";
 import { nanoid } from "nanoid";
 
@@ -115,6 +116,13 @@ const Canvas = () => {
             dispatch(setHoverElement({ id: shape.id }));
           }
         }
+        if (shape.type == "pen") {
+          if (
+            isPointOnPath(event, canvas, scale / 100, pan, shape)
+          ) {
+            dispatch(setHoverElement({ id: shape.id }));
+          }
+        }        
         if (shape.type == "text") {
           if (isMouseInsideText(event, canvas, ctx, shape, scale / 100, pan)) {
             dispatch(setHoverElement({ id: shape.id }));
