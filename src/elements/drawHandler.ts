@@ -1,7 +1,7 @@
 import { getFontDisplayProperties } from "./text";
 
 function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
-  let { type, width, height, posX, posY, rotation } = element;
+  let { points, type, width, height, posX, posY, rotation } = element;
 
   const handleSize = 6;
 
@@ -10,6 +10,28 @@ function drawHandler(ctx: CanvasRenderingContext2D, element: any) {
     height = element.height;
     posX = element.posX;
     posY = element.posY;
+  }
+
+  if (type == "pen"){
+
+    // points from the origin;  
+    let highestPoint  :{x:number,y:number}= points[0];
+    let lowestpoint  :{x:number,y:number}= points[0];
+    let farthestPoint :{x:number,y:number}= points[0];
+    let nearestPoint:{x:number,y:number}= points[0];
+    
+    points.forEach((point:{x:number,y:number}) => {
+        if(point.y > highestPoint.y)highestPoint = point; 
+        if(point.y < lowestpoint.y)lowestpoint = point; 
+        if(point.x > farthestPoint.x)farthestPoint = point; 
+        if(point.x < nearestPoint.x) nearestPoint = point; 
+    });
+
+
+    width = (farthestPoint.x - nearestPoint.x);
+    height = (highestPoint.y - lowestpoint.y);
+    posX = nearestPoint.x;
+    posY = lowestpoint.y;
   }
 
   if (type == "ellipse") {
